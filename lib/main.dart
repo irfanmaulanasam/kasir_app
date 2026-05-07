@@ -1,53 +1,52 @@
 import 'package:flutter/material.dart';
-import 'data/local/produk_repo.dart';
+import 'ui/produk/produk_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: ProdukPage());
+    return const MaterialApp(
+      home: MainMenu(),
+    );
   }
 }
 
-class ProdukPage extends StatefulWidget {
-  @override
-  _ProdukPageState createState() => _ProdukPageState();
-}
-
-class _ProdukPageState extends State<ProdukPage> {
-  final namaController = TextEditingController();
-  final hargaController = TextEditingController();
-
-  final repo = ProdukRepo();
-
-  void simpan() async {
-    await repo.insert({
-      "nama": namaController.text,
-      "harga": int.parse(hargaController.text),
-    });
-
-    namaController.clear();
-    hargaController.clear();
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Tersimpan")));
-  }
+class MainMenu extends StatelessWidget {
+  const MainMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Produk")),
-      body: Padding(
-        padding: EdgeInsets.all(16),
+      appBar: AppBar(title: const Text("Kasir App")),
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(controller: namaController, decoration: InputDecoration(labelText: "Nama")),
-            TextField(controller: hargaController, decoration: InputDecoration(labelText: "Harga"), keyboardType: TextInputType.number),
-            SizedBox(height: 20),
-            ElevatedButton(onPressed: simpan, child: Text("Simpan"))
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProdukPage()),
+                );
+              },
+              child: const Text("Kelola Produk"),
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: () {
+                // nanti transaksi
+              },
+              child: const Text("Transaksi"),
+            ),
+
           ],
         ),
       ),
