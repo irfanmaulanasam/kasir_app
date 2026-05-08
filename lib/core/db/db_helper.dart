@@ -57,8 +57,17 @@ class DBHelper {
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
-          await db
-              .execute('ALTER TABLE produk ADD COLUMN stok INTEGER DEFAULT 0');
+          await db.execute('ALTER TABLE produk ADD COLUMN stok INTEGER DEFAULT 0');
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS stok_log(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              produk_id INTEGER,
+              qty INTEGER,
+              tipe TEXT,
+              catatan TEXT,
+              tanggal INTEGER
+            )
+          ''');
         }
       },
     );
