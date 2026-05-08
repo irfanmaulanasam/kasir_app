@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ui/produk/produk_page.dart';
+import 'ui/transaksi/transaksi_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,9 +43,13 @@ class MainMenu extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                // nanti transaksi
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TransaksiPage()),
+                );
               },
               child: const Text("Transaksi"),
+
             ),
 
           ],
