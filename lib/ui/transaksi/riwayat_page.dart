@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/local/transaksi_repo.dart';
-
+import '../transaksi/detail_transaksi_page.dart';
 class RiwayatPage extends StatefulWidget {
   const RiwayatPage({super.key});
 
@@ -84,7 +84,16 @@ class _RiwayatPageState extends State<RiwayatPage> {
                   ),
 
                   child: ListTile(
-
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DetailTransaksiPage(
+                            transaksiId: trx['id'],
+                          ),
+                        ),
+                      );
+                    },
                     leading: CircleAvatar(
                       child: Text(
                         trx['id'].toString(),
