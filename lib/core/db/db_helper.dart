@@ -11,48 +11,48 @@ class DBHelper {
   }
 
   Future<Database> initDb() async {
-    String path = join(await getDatabasesPath(), 'kasir.db');
+    final path = join(await getDatabasesPath(), 'kasir.db');
 
-    return await openDatabase(
+    return openDatabase(
       path,
       version: 2,
       onCreate: (db, version) async {
         await db.execute('''
-        CREATE TABLE produk(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          nama TEXT,
-          harga INTEGER,
-          stok INTEGER
-        )
+          CREATE TABLE produk(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nama TEXT,
+            harga INTEGER,
+            stok INTEGER DEFAULT 0
+          )
         ''');
 
         await db.execute('''
-        CREATE TABLE transaksi(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          tanggal INTEGER,
-          total INTEGER
-        )
+          CREATE TABLE transaksi(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tanggal INTEGER,
+            total INTEGER
+          )
         ''');
 
         await db.execute('''
-        CREATE TABLE detail(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          transaksi_id INTEGER,
-          produk_id INTEGER,
-          qty INTEGER,
-          harga INTEGER
-        )
+          CREATE TABLE detail(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            transaksi_id INTEGER,
+            produk_id INTEGER,
+            qty INTEGER,
+            harga INTEGER
+          )
         ''');
 
         await db.execute('''
-        CREATE TABLE stok_log(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          produk_id INTEGER,
-          qty INTEGER,
-          tipe TEXT,
-          catatan TEXT,
-          tanggal INTEGER
-        )
+          CREATE TABLE stok_log(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            produk_id INTEGER,
+            qty INTEGER,
+            tipe TEXT,
+            catatan TEXT,
+            tanggal INTEGER
+          )
         ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {

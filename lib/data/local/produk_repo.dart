@@ -6,7 +6,7 @@ class ProdukRepo {
   Future<int> insert(Map<String, dynamic> data) async {
     final db = await _dbHelper.db;
 
-    return await db.transaction<int>((txn) async {
+    return db.transaction<int>((txn) async {
       final int stokAwal = (data['stok'] ?? 0) as int;
 
       final id = await txn.insert('produk', {
@@ -31,14 +31,10 @@ class ProdukRepo {
 
   Future<List<Map<String, dynamic>>> getAll() async {
     final db = await _dbHelper.db;
-    return await db.query('produk', orderBy: 'nama ASC');
+    return db.query('produk', orderBy: 'nama ASC');
   }
 
-  Future<void> tambahStok(
-    int produkId,
-    int qty, {
-    String catatan = '',
-  }) async {
+  Future<void> tambahStok(int produkId, int qty, {String catatan = ''}) async {
     final db = await _dbHelper.db;
 
     await db.transaction((txn) async {
@@ -50,9 +46,7 @@ class ProdukRepo {
         limit: 1,
       );
 
-      if (rows.isEmpty) {
-        throw Exception('Produk tidak ditemukan');
-      }
+      if (rows.isEmpty) throw Exception('Produk tidak ditemukan');
 
       final currentStok = (rows.first['stok'] as int?) ?? 0;
       final newStok = currentStok + qty;
@@ -72,5 +66,53 @@ class ProdukRepo {
         'tanggal': DateTime.now().millisecondsSinceEpoch,
       });
     });
+  }
+
+  Future<void> kurangiStokManual(int produkId, int qty, {String catatan = ''}) async {
+    final db = await _dbHelper.db;
+
+    await db.transaction((txn) async {
+      final rows = await txn.query(
+        'produk',
+        columns: ['stok'],
+        where: 'id = ?',
+        whereArgs: [produkId],
+        limit: 1,
+      );
+
+      if (rows.isEmpty) throw Exception('Produk tidak ditemukan');
+
+      final currentStok = (rows.first['stok'] as int?) ?? 0;
+      if (currentStok < qty) {
+        throw Exception('Stok tidak cukup. Sisa: $currentStok');
+      }
+
+      final newStok = currentStok - qty;
+
+      await txn.update(
+        'produk',
+        {'stok': newStok},
+        where: 'id = ?',
+        whereArgs: [produkId],
+      );
+
+      await txn.insert('stok_log', {
+        'produk_id': produkId,
+        'qty': qty,
+        'tipe': 'KELUAR',
+        'catatan': catatan.isEmpty ? 'kurangi stok manual' : catatan,
+        'tanggal': DateTime.now().millisecondsSinceEpoch,
+      });
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getStockLog(int produkId) async {
+    final db = await _dbHelper.db;
+    return db.query(
+      'stok_log',
+      where: 'produk_id = ?',
+      whereArgs: [produkId],
+      orderBy: 'tanggal DESC',
+    );
   }
 }
