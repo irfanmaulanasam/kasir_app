@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'ui/produk/produk_page.dart';
 import 'ui/transaksi/transaksi_page.dart';
-
+import 'ui/transaksi/riwayat_page.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -50,6 +50,18 @@ class MainMenu extends StatelessWidget {
               },
               child: const Text("Transaksi"),
 
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const RiwayatPage(),
+                  ),
+                );
+              },
+              child: const Text('Riwayat'),
             ),
 
           ],

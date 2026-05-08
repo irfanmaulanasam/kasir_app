@@ -128,7 +128,9 @@ class _TransaksiPageState extends State<TransaksiPage> {
           ),
         ],
       ),
-      body: Column(
+      body: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(10, 5, 10, 24),
+        child: Column(
         children: [
           // LIST PRODUK
           Expanded(
@@ -221,7 +223,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
 
           // TOTAL + BAYAR
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(5, 0, 5, 14),
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -242,6 +244,8 @@ class _TransaksiPageState extends State<TransaksiPage> {
             ),
           ),
         ],
+
+      ),
       ),
     );
   }

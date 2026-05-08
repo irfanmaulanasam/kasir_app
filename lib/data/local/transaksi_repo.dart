@@ -33,4 +33,30 @@ class TransaksiRepo {
       return transaksiId;
     });
   }
+  Future<List<Map<String, dynamic>>> getTransaksi() async {
+
+    final db = await _dbHelper.db;
+
+    return await db.query(
+      'transaksi',
+      orderBy: 'id DESC',
+    );
+  }
+  Future<List<Map<String, dynamic>>> getDetailTransaksi(
+      int transaksiId) async {
+
+    final db = await _dbHelper.db;
+
+    return await db.rawQuery('''
+      SELECT
+        detail.id,
+        detail.qty,
+        detail.harga,
+        produk.nama
+      FROM detail
+      JOIN produk
+        ON produk.id = detail.produk_id
+      WHERE detail.transaksi_id = ?
+    ''', [transaksiId]);
+  }
 }
