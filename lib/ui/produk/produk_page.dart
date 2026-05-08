@@ -12,7 +12,7 @@ class _ProdukPageState extends State<ProdukPage> {
 
   final namaController = TextEditingController();
   final hargaController = TextEditingController();
-
+  final stokController = TextEditingController();
   final repo = ProdukRepo();
 
   Future<List<Map<String, dynamic>>>? produkList;
@@ -33,10 +33,12 @@ class _ProdukPageState extends State<ProdukPage> {
     await repo.insert({
       "nama": namaController.text,
       "harga": int.parse(hargaController.text),
+      "stok": int.parse(stokController.text),
     });
 
     namaController.clear();
     hargaController.clear();
+    stokController.clear();
 
     loadProduk(); // refresh list
   }
@@ -61,6 +63,11 @@ class _ProdukPageState extends State<ProdukPage> {
                 TextField(
                   controller: hargaController,
                   decoration: const InputDecoration(labelText: "Harga"),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: stokController,
+                  decoration: const InputDecoration(labelText: "Stok"),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 10),
@@ -94,7 +101,50 @@ class _ProdukPageState extends State<ProdukPage> {
                   itemBuilder: (context, i) {
                     return ListTile(
                       title: Text(data[i]['nama']),
-                      subtitle: Text("Rp ${data[i]['harga']}"),
+                      subtitle: Text("Rp ${data[i]['harga']} | Stok: ${data[i]['stok']}"),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () async {
+                          final qtyController = TextEditingController();
+
+                          await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Tambah stok ${data[i]['nama']}'),
+                                content: TextField(
+                                  controller: qtyController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(labelText: 'Qty'),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Batal'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      final qty = int.tryParse(qtyController.text) ?? 0;
+                                      if (qty > 0) {
+                                        await repo.tambahStok(
+                                          data[i]['id'] as int,
+                                          qty,
+                                          catatan: 'stok masuk manual',
+                                        );
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                          loadProduk();
+                                        }
+                                      }
+                                    },
+                                    child: const Text('Simpan'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
                     );
                   },
                 );

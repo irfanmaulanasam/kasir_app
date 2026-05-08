@@ -15,13 +15,14 @@ class DBHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE produk(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           nama TEXT,
-          harga INTEGER
+          harga INTEGER,
+          stok INTEGER
         )
         ''');
 
@@ -42,6 +43,23 @@ class DBHelper {
           harga INTEGER
         )
         ''');
+
+        await db.execute('''
+        CREATE TABLE stok_log(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          produk_id INTEGER,
+          qty INTEGER,
+          tipe TEXT,
+          catatan TEXT,
+          tanggal INTEGER
+        )
+        ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db
+              .execute('ALTER TABLE produk ADD COLUMN stok INTEGER DEFAULT 0');
+        }
       },
     );
   }
