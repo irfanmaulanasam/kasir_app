@@ -10,6 +10,15 @@ class TransaksiPage extends StatefulWidget {
 }
 
 class _TransaksiPageState extends State<TransaksiPage> {
+  final TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  } 
+
   final ProdukRepo repo = ProdukRepo();
 
   Future<List<Map<String, dynamic>>>? produkList;
@@ -143,33 +152,30 @@ class _TransaksiPageState extends State<TransaksiPage> {
                 }
 
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
+                  return Center(child: Text('Error: ${snapshot.error}'));
                 }
 
                 final data = snapshot.data ?? [];
 
-                if (data.isEmpty) {
-                  return const Center(
-                    child: Text('Belum ada produk'),
-                  );
+                final filteredData = data.where((produk) {
+                  final nama = (produk['nama'] ?? '').toString().toLowerCase();
+                  return nama.contains(searchQuery);
+                }).toList();
+
+                if (filteredData.isEmpty) {
+                  return const Center(child: Text('Produk tidak ditemukan'));
                 }
 
                 return ListView.builder(
-                  itemCount: data.length,
+                  itemCount: filteredData.length,
                   itemBuilder: (context, index) {
-                    final produk = data[index];
+                    final produk = filteredData[index];
+
                     return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
+                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       child: ListTile(
                         title: Text(produk['nama'].toString()),
-                        subtitle: Text(
-                          formatRupiah(produk['harga'] as int),
-                        ),
+                        subtitle: Text(formatRupiah(produk['harga'] as int)),
                         trailing: const Icon(Icons.add_circle_outline),
                         onTap: () => tambahKeCart(produk),
                       ),
@@ -180,7 +186,24 @@ class _TransaksiPageState extends State<TransaksiPage> {
             ),
           ),
 
-          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Cari produk...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.toLowerCase();
+                });
+              },
+            ),
+          ),
 
           // CART
           Expanded(
