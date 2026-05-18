@@ -86,7 +86,7 @@ class MainMenu extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('Settings'),
+              child: const Text('store Settings'),
             ),
           ],
         ),
