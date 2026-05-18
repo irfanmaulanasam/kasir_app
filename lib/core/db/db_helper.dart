@@ -54,6 +54,15 @@ class DBHelper {
             tanggal INTEGER
           )
         ''');
+        await db.execute('''
+          CREATE TABLE settings(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nama_toko TEXT,
+            alamat TEXT,
+            telepon TEXT,
+            footer TEXT
+          )
+        ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -68,6 +77,18 @@ class DBHelper {
               tanggal INTEGER
             )
           ''');
+          if (oldVersion < 3) {
+            await db.execute('''
+              CREATE TABLE IF NOT EXISTS settings(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nama_toko TEXT,
+                alamat TEXT,
+                telepon TEXT,
+                footer TEXT
+              )
+            ''');
+
+          }
         }
       },
     );

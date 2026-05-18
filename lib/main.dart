@@ -3,6 +3,7 @@ import 'ui/produk/produk_page.dart';
 import 'ui/transaksi/transaksi_page.dart';
 import 'ui/transaksi/riwayat_page.dart';
 import 'ui/inventory/inventory_page.dart';
+import 'ui/settings/settings_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -74,6 +75,18 @@ class MainMenu extends StatelessWidget {
                 );
               },
               child: const Text('Stok'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SettingsPage(),
+                  ),
+                );
+              },
+              child: const Text('Settings'),
             ),
           ],
         ),
