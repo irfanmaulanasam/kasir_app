@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../data/local/produk_repo.dart';
 import '../../data/local/transaksi_repo.dart';
-
+import '../../data/local/settings_repo.dart';
+import 'receipt_preview_page.dart';
 class TransaksiPage extends StatefulWidget {
   const TransaksiPage({super.key});
 
@@ -12,7 +13,6 @@ class TransaksiPage extends StatefulWidget {
 class _TransaksiPageState extends State<TransaksiPage> {
   final TextEditingController searchController = TextEditingController();
   String searchQuery = '';
-
   @override
   void dispose() {
     searchController.dispose();
@@ -38,13 +38,39 @@ class _TransaksiPageState extends State<TransaksiPage> {
     });
   }
 
-  void tambahKeCart(Map<String, dynamic> produk) {
+  void tambahKeCart(Map<String, dynamic> produk,) {
+
     final int id = produk['id'] as int;
 
+    final stok =
+        produk['stok'] as int? ?? 0;
+
+    final currentQty =
+        cart[id]?['qty'] as int? ?? 0;
+
+    if (currentQty >= stok) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Stok tidak cukup',
+          ),
+        ),
+      );
+
+      return;
+    }
+
     setState(() {
+
       if (cart.containsKey(id)) {
-        cart[id]!['qty'] = (cart[id]!['qty'] as int) + 1;
+
+        cart[id]!['qty'] =
+            (cart[id]!['qty'] as int) + 1;
+
       } else {
+
         cart[id] = {
           'id': id,
           'nama': produk['nama'],
@@ -91,40 +117,62 @@ class _TransaksiPageState extends State<TransaksiPage> {
   }
 
   Future<void> bayar() async {
-  if (cart.isEmpty) return;
+    if (cart.isEmpty) return;
 
-  try {
+    final total = getTotal();
 
-    final transaksiRepo = TransaksiRepo();
+    final settingsData =
+        await SettingsRepo().getSettings();
 
-    final transaksiId = await transaksiRepo.simpanTransaksi(
-      cart.values.toList(),
-    );
+    try {
+      final transaksiRepo = TransaksiRepo();
 
-    if (!mounted) return;
+      // simpan snapshot item sebelum cart dikosongkan
+      final receiptItems =
+          cart.values.toList();
 
-    setState(() {
-      cart.clear();
-    });
+      final transaksiId =
+          await transaksiRepo.simpanTransaksi(
+        receiptItems,
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Transaksi tersimpan. ID: $transaksiId'),
-      ),
-    );
+      // CLEAR cart dulu
+      setState(() {
+        cart.clear();
+      });
 
-  } catch (e) {
+      if (!mounted) return;
 
-    if (!mounted) return;
+      // baru pindah page
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ReceiptPreviewPage(
+            transaksi: {
+              'id': transaksiId,
+              'total': total,
+            },
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Gagal simpan transaksi: $e'),
-      ),
-    );
+            items: receiptItems,
 
+            settings: settingsData,
+          ),
+        ),
+      );
+    } catch (e) {
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Gagal simpan transaksi: $e',
+          ),
+        ),
+      );
+    }
   }
-}
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,6 +189,25 @@ class _TransaksiPageState extends State<TransaksiPage> {
         minimum: const EdgeInsets.fromLTRB(10, 5, 10, 24),
         child: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Cari produk...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.toLowerCase();
+                });
+              },
+            ),
+          ),
+
           // LIST PRODUK
           Expanded(
             flex: 2,
@@ -172,12 +239,32 @@ class _TransaksiPageState extends State<TransaksiPage> {
                     final produk = filteredData[index];
 
                     return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+
                       child: ListTile(
-                        title: Text(produk['nama'].toString()),
-                        subtitle: Text(formatRupiah(produk['harga'] as int)),
-                        trailing: const Icon(Icons.add_circle_outline),
-                        onTap: () => tambahKeCart(produk),
+                        enabled: (produk['stok'] ?? 0) > 0,
+
+                        title: Text(
+                          produk['nama'].toString(),
+                        ),
+
+                        subtitle: Text(
+                          '${formatRupiah(produk['harga'] as int)} • '
+                          'Stok: ${produk['stok'] ?? 0}',
+                        ),
+
+                        trailing: Icon(
+                          (produk['stok'] ?? 0) > 0
+                              ? Icons.add_circle_outline
+                              : Icons.block,
+                        ),
+
+                        onTap: (produk['stok'] ?? 0) <= 0
+                            ? null
+                            : () => tambahKeCart(produk),
                       ),
                     );
                   },
@@ -186,25 +273,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                hintText: 'Cari produk...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value.toLowerCase();
-                });
-              },
-            ),
-          ),
-
+          
           // CART
           Expanded(
             flex: 2,
@@ -263,9 +332,12 @@ class _TransaksiPageState extends State<TransaksiPage> {
                   onPressed: cart.isEmpty ? null : bayar,
                   child: const Text('Bayar'),
                 ),
+                
               ],
+
             ),
           ),
+          
         ],
 
       ),
