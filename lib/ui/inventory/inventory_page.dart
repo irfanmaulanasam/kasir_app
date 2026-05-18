@@ -32,124 +32,142 @@ class _InventoryPageState extends State<InventoryPage> {
   }
 
   Future<void> showAdjustDialog(
-      Map<String, dynamic> produk, {
-      required bool tambah,
-    }) async {
-      final qtyController = TextEditingController();
-      final catatanController = TextEditingController();
-      String alasan = tambah ? 'Tambah Stok' : 'Kurangi Stok'; 
-      catatanController.text = alasan;
-      final pageContext = context;
+    Map<String, dynamic> produk, {
+    required bool tambah,
+  }) async {
+    final qtyController = TextEditingController();
+    final catatanController = TextEditingController();
+    
+    // 1. Inisialisasi alasan awal dengan tepat
+    String alasan = tambah ? 'Restock' : 'Barang rusak'; 
+    catatanController.text = alasan;
+    
+    final pageContext = context;
 
-      await showDialog(
-        context: pageContext,
-        builder: (dialogContext) {
-          return AlertDialog(
-            title: Text('${tambah ? "Tambah" : "Kurangi"} stok'),
-            content: Column(
-
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('${produk['nama']}'),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: qtyController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Qty'),
-                ),
-                TextField(
-                  controller: catatanController,
-                  decoration: const InputDecoration(labelText: 'Catatan'),
-                ),
-                DropdownButtonFormField<String>(
-                  value: alasan,
-
-                  items: (tambah
-                          ? [
-                              'Restock',
-                              'Supplier datang',
-                              'Koreksi stok',
-                            ]
-                          : [
-                              'Barang rusak',
-                              'Dipakai internal',
-                              'Hilang',
-                              'Koreksi stok',
-                              'Retur',
-                            ])
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        ),
-                      )
-                      .toList(),
-
-                  onChanged: (value) {
-                    alasan = value!;
-                    catatanController.text = value;
-                  },
-
-                  decoration: const InputDecoration(
-                    labelText: 'Alasan',
+    await showDialog(
+      context: pageContext,
+      builder: (dialogContext) {
+        // Menggunakan StatefulBuilder agar perubahan Dropdown langsung merubah UI di dalam Dialog
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: Text('${tambah ? "Tambah" : "Kurangi"} stok'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('${produk['nama']}'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: qtyController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Qty'),
                   ),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Batal'),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: alasan,
+                    items: (tambah
+                            ? ['Restock', 'Supplier datang', 'Koreksi stok']
+                            : ['Barang rusak', 'Dipakai internal', 'Hilang', 'Koreksi stok', 'Retur'])
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setStateDialog(() {
+                          alasan = value;
+                          catatanController.text = value;
+                        });
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Alasan',
+                    ),
+                  ),
+                  TextField(
+                    controller: catatanController,
+                    decoration: const InputDecoration(labelText: 'Catatan Tambahan'),
+                  ),
+                ],
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  final qty = int.tryParse(qtyController.text) ?? 0;
-                  if (qty <= 0) return;
-                  if (!tambah && catatanController.text.trim().isEmpty) {
-                    ScaffoldMessenger.of(pageContext).showSnackBar(
-                      const SnackBar(
-                        content: Text('Catatan wajib untuk pengurangan stok'),
-                      ),
-                    );
-                    return;
-                  }
-                  try {
-                    if (tambah) {
-                      await repo.tambahStok(
-                        produk['id'] as int,
-                        qty,
-                        catatan: catatanController.text,
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Batal'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final qty = int.tryParse(qtyController.text) ?? 0;
+                    
+                    if (qty <= 0) {
+                      ScaffoldMessenger.of(pageContext).showSnackBar(
+                        const SnackBar(content: Text('Qty harus lebih dari 0')),
                       );
-                    } else {
-                      await repo.kurangiStokManual(
-                        produk['id'] as int,
-                        qty,
-                        catatan: catatanController.text,
+                      return;
+                    }
+                    
+                    // 2. Validasi catatan yang lebih aman
+                    if (!tambah && catatanController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(pageContext).showSnackBar(
+                        const SnackBar(content: Text('Catatan wajib untuk pengurangan stok')),
                       );
+                      return;
                     }
 
-                    if (!pageContext.mounted) return;
-                    Navigator.of(pageContext).pop();
-                    loadData();
-                  } catch (e) {
-                    if (!pageContext.mounted) return;
-                    ScaffoldMessenger.of(pageContext).showSnackBar(
-                      SnackBar(content: Text('$e')),
-                    );
-                  }
-                },
-                child: const Text('Simpan'),
-              ),
-            ],
-          );
-        },
-      );
-    }
+                    try {
+                      if (tambah) {
+                        await repo.tambahStok(
+                          produk['id'] as int,
+                          qty,
+                          catatan: catatanController.text.trim(),
+                        );
+                      } else {
+                        await repo.kurangiStokManual(
+                          produk['id'] as int,
+                          qty,
+                          catatan: catatanController.text.trim(),
+                        );
+                      }
+
+                      if (!pageContext.mounted) return;
+                      Navigator.of(pageContext).pop();
+                      loadData(); // Memperbarui data list setelah sukses
+                    } catch (e) {
+                      if (!pageContext.mounted) return;
+                      ScaffoldMessenger.of(pageContext).showSnackBar(
+                        SnackBar(content: Text('$e')),
+                      );
+                    }
+                  },
+                  child: const Text('Simpan'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   Future<void> showLog(Map<String, dynamic> produk) async {
     final logs = await repo.getStockLog(produk['id'] as int);
 
     if (!mounted) return;
+
+    // Hitung stok saat ini secara real-time dari log data agar sinkron
+    int currentStock = 0;
+    for (var log in logs) {
+      final type = log['tipe'].toString();
+      final qty = log['qty'] as int;
+      if (type == 'MASUK') {
+        currentStock += qty;
+      } else {
+        currentStock -= qty;
+      }
+    }
 
     showModalBottomSheet(
       context: context,
@@ -159,7 +177,9 @@ class _InventoryPageState extends State<InventoryPage> {
           children: [
             ListTile(
               title: Text(produk['nama'].toString()),
-              subtitle: Text('Stok sekarang: ${produk['stok']}'),
+              subtitle: Text(
+                currentStock <= 0 ? 'STOK HABIS' : 'Stok: $currentStock',
+              ),
             ),
             const Divider(),
             if (logs.isEmpty)
@@ -177,16 +197,14 @@ class _InventoryPageState extends State<InventoryPage> {
                 return ListTile(
                   leading: Icon(
                     type == 'MASUK' ? Icons.add_circle : Icons.remove_circle,
+                    color: type == 'MASUK' ? Colors.green : Colors.red,
                   ),
                   title: Text('$type $qty'),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (catatan.isNotEmpty)
-                        Text(catatan),
-
+                      if (catatan.isNotEmpty) Text(catatan),
                       const SizedBox(height: 4),
-
                       Text(
                         tanggal.toString(),
                         style: const TextStyle(
