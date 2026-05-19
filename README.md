@@ -125,3 +125,12 @@ Saat ini fokus pengembangan:
 - optimasi database
 - scanner integration
 - UX simplification
+
+## Stability Level
+
+| Module | Stability |
+|---|---|
+| Transaction Engine | High |
+| Product Management | High |
+| Scanner Module | Medium |
+| Cloud Sync | Low |
