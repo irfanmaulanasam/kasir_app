@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/local/produk_repo.dart';
-
+import '../../widgets/currency_textfield.dart';
 class ProdukPage extends StatefulWidget {
   const ProdukPage({super.key});
 
@@ -13,7 +13,7 @@ class _ProdukPageState extends State<ProdukPage> {
   final namaController = TextEditingController();
   final hargaController = TextEditingController();
   final stokController = TextEditingController();
-  final repo = ProdukRepo();
+  final repo = ProdukRepo(); 
 
   Future<List<Map<String, dynamic>>>? produkList;
 
@@ -32,8 +32,8 @@ class _ProdukPageState extends State<ProdukPage> {
   void simpan() async {
     await repo.insert({
       "nama": namaController.text,
-      "harga": int.parse(hargaController.text),
-      "stok": int.parse(stokController.text),
+      "harga": int.parse(hargaController.text.replaceAll('.', ''),),
+      "stok": int.parse(stokController.text)
     });
 
     namaController.clear();
@@ -60,11 +60,8 @@ class _ProdukPageState extends State<ProdukPage> {
                   controller: namaController,
                   decoration: const InputDecoration(labelText: "Nama Barang"),
                 ),
-                TextField(
-                  controller: hargaController,
-                  decoration: const InputDecoration(labelText: "Harga"),
-                  keyboardType: TextInputType.number,
-                ),
+                CurrencyTextField(controller: hargaController, label: 'harga Produk'),
+                const SizedBox(height: 10),
                 TextField(
                   controller: stokController,
                   decoration: const InputDecoration(labelText: "Stok"),

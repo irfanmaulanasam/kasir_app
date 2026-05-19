@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 import 'app.dart';
 import 'core/config/flavor_config.dart';
-// import 'data/remote/sync_service.dart'; // Contoh import remote
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Set konfigurasi ke Pro
-  FlavorConfig.set(Flavor.pro, "Kasir Pro (Cloud Sync)");
 
-  // Inisialisasi Cloud hanya ada di file ini
-  // await CloudService.init(); 
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting(
+    'id_ID',
+    null,
+  );
+
+  FlavorConfig.set(
+    Flavor.pro,
+    "Kasir Pro",
+  );
 
   runApp(const MyApp());
 }

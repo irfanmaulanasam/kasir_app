@@ -3,6 +3,7 @@ import '../../data/local/produk_repo.dart';
 import '../../data/local/transaksi_repo.dart';
 import '../../data/local/settings_repo.dart';
 import 'receipt_preview_page.dart';
+import '../../widgets/currency_textfield.dart';
 class TransaksiPage extends StatefulWidget {
   
   const TransaksiPage({super.key});
@@ -138,7 +139,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
 
             final bayar =
                 int.tryParse(
-                      bayarController.text,
+                      bayarController.text.replaceAll('.', ''),
                     ) ??
                     0;
 
@@ -215,23 +216,14 @@ class _TransaksiPageState extends State<TransaksiPage> {
 
                   const SizedBox(height: 16),
 
-                  TextField(
-                    controller:
-                        bayarController,
-
-                    keyboardType:
-                        TextInputType.number,
-
-                    decoration:
-                        const InputDecoration(
-                      labelText:
-                          'Uang Diterima',
-                    ),
-
+                  CurrencyTextField(
+                    controller: bayarController,
+                    label: 'Uang Diterima',
                     onChanged: (_) {
                       setModalState(() {});
                     },
-                  ),
+                  ), 
+                  
 
                   const SizedBox(height: 16),
 

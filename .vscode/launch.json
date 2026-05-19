@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Kasir Basic",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_basic.dart"
+    },
+    {
+      "name": "Kasir Advanced",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_advance.dart"
+    },
+    {
+      "name": "Kasir Pro",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_pro.dart"
+    }
+  ]
+}
