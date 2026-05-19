@@ -1,82 +1,204 @@
-# POS / Kasir App
+# Kasir App
 
-Aplikasi kasir berbasis Flutter dengan dukungan offline-first,
-multi segment bisnis, dan pengembangan modular.
+Aplikasi POS (Point of Sale) berbasis Flutter untuk UMKM dengan fokus:
+- offline first
+- cepat dipakai
+- workflow kasir sederhana
+- inventory ringan
+- monitoring usaha
 
----
-
-# Feature Status
-
-## Core Features
-
-| Feature | Status | Basic | Advance | Pro |
-|---|---|---|---|---|
-| Login | ✅ Stable | ✅ | ✅ | ✅ |
-| Transaksi Kasir | ✅ Stable | ✅ | ✅ | ✅ |
-| Manajemen Produk | ✅ Stable | ✅ | ✅ | ✅ |
-| Manajemen Stok | ✅ Stable | ✅ | ✅ | ✅ |
-| Cetak Struk Bluetooth | 🚧 Development | ❌ | ✅ | ✅ |
-| Barcode Scanner | 🚧 Development | ❌ | ✅ | ✅ |
-| QR Code Scanner | 🚧 Development | ❌ | ✅ | ✅ |
-| Multi User | 📋 Planned | ❌ | ❌ | ✅ |
-| Cloud Sync | 📋 Planned | ❌ | ❌ | ✅ |
-| Multi Cabang | 📋 Planned | ❌ | ❌ | ✅ |
+Project saat ini difokuskan untuk mematangkan versi BASIC terlebih dahulu sebelum masuk ke ADVANCED dan PRO.
 
 ---
 
-# Status Legend
+# Current Focus
 
-| Symbol | Meaning |
-|---|---|
-| ✅ | Stable / Ready |
-| 🚧 | In Development |
-| 🧪 | Experimental |
-| 📋 | Planned |
-| ❌ | Not Available |
+Saat ini development diprioritaskan untuk:
+
+✅ stabilitas transaksi  
+✅ inventory workflow  
+✅ kenyamanan input kasir  
+✅ histori stok  
+✅ receipt / nota  
+✅ laporan sederhana  
+
+Bukan fitur enterprise.
 
 ---
 
-# Package Segmentation
+# App Structure
 
-## Basic
-Cocok untuk:
-- warung
-- toko kecil
-- UMKM
+## Main Menu
 
-Fitur utama:
-- transaksi
-- stok dasar
+### 1. Transaksi
+Digunakan untuk proses penjualan.
+
+Fitur:
+- pilih produk
+- cart transaksi
+- quick search produk
+- metode pembayaran
+- uang diterima
+- kembalian otomatis
+- receipt preview
+- simpan transaksi
+
+---
+
+### 2. Inventory
+Digunakan untuk pengelolaan produk dan stok.
+
+Fitur:
+- tambah produk
+- edit produk
+- stok awal
+- tambah stok
+- kurangi stok
+- histori stok masuk
+- histori stok keluar
+- catatan stok
+- warning stok habis
+
+---
+
+### 3. Riwayat
+Digunakan untuk monitoring usaha.
+
+Fitur:
+- ringkasan omzet
+- jumlah transaksi
+- riwayat transaksi
+- riwayat stok
+- produk terlaris
+- produk hampir habis
+
+---
+
+### 4. Store Settings
+Digunakan untuk identitas toko.
+
+Fitur:
+- nama toko
+- alamat toko
+- footer nota
+- logo toko
+
+---
+
+# Flavor Plan
+
+## BASIC (Current Main Focus)
+
+Tujuan:
+POS offline sederhana yang nyaman dipakai harian.
+
+### Included
+- transaksi offline
+- inventory
+- histori stok
+- pembayaran
+- receipt
 - laporan sederhana
 
 ---
 
-## Advance
-Cocok untuk:
-- toko dengan banyak SKU
-- minimarket kecil
-- gudang kecil
+## ADVANCED
 
-Tambahan:
+Tujuan:
+mempercepat operasional kasir.
+
+### Planned Features
 - barcode scanner
 - QR scanner
-- printer bluetooth
+- quick action
+- shortcut transaksi
+- customer data
+- pencarian lebih cepat
 
 ---
 
-## Pro / Enterprise
-Cocok untuk:
-- multi outlet
-- operasional kompleks
-- banyak pegawai
+## PRO
 
-Tambahan:
-- multi user
+Tujuan:
+scaling bisnis & sinkronisasi.
+
+### Planned Features
 - cloud sync
-- role permission
-- analytics
+- multi device
+- multi cashier
+- dashboard owner
+- export laporan
+- backup online
+- multi cabang
 
 ---
+
+# Progress Feature
+
+| Feature | Status |
+|---|---|
+| Tambah produk | ✅ |
+| Edit produk | 🚧 |
+| Inventory stok | ✅ |
+| Histori stok | ✅ |
+| Cart transaksi | ✅ |
+| Payment flow | ✅ |
+| Receipt preview | ✅ |
+| Print / PDF receipt | 🚧 |
+| Riwayat transaksi | ✅ |
+| Dashboard riwayat | 🚧 |
+| Omzet sederhana | 🚧 |
+| Warning stok habis | ✅ |
+| Quick search produk | ✅ |
+| Store settings | ✅ |
+| Barcode scanner | ⏳ |
+| Cloud sync | ⏳ |
+| Multi device | ⏳ |
+
+---
+
+# Tech Stack
+
+- Flutter
+- SQLite (sqflite)
+- Dart
+
+---
+
+# Development Philosophy
+
+Project ini difokuskan untuk:
+- workflow dulu
+- UX kasir dulu
+- stabilitas inventory dulu
+
+Bukan:
+- fitur enterprise terlalu cepat
+- dashboard kompleks
+- cloud terlalu dini
+
+Tujuan utama:
+membuat aplikasi kasir yang benar-benar nyaman dipakai UMKM sehari-hari.
+
+---
+
+# Run App
+
+## BASIC
+```bash
+flutter run -t lib/main_basic.dart
+```bash
+
+## ADVANCED
+```bash
+flutter run -t lib/main_advanced.dart
+```bash
+
+## PRO
+```bash
+flutter run -t lib/main_pro.dart
+```bash
+
 
 # Tech Stack
 
