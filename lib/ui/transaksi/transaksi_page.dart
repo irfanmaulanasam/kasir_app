@@ -4,6 +4,7 @@ import '../../data/local/transaksi_repo.dart';
 import '../../data/local/settings_repo.dart';
 import 'receipt_preview_page.dart';
 class TransaksiPage extends StatefulWidget {
+  
   const TransaksiPage({super.key});
 
   @override
@@ -11,6 +12,10 @@ class TransaksiPage extends StatefulWidget {
 }
 
 class _TransaksiPageState extends State<TransaksiPage> {
+  final TextEditingController bayarController =
+    TextEditingController();
+  String metodeBayar = 'Cash';
+
   final TextEditingController searchController = TextEditingController();
   String searchQuery = '';
   @override
@@ -20,7 +25,6 @@ class _TransaksiPageState extends State<TransaksiPage> {
   } 
 
   final ProdukRepo repo = ProdukRepo();
-
   Future<List<Map<String, dynamic>>>? produkList;
 
   // cart key = produk id
@@ -116,7 +120,199 @@ class _TransaksiPageState extends State<TransaksiPage> {
         )}';
   }
 
-  Future<void> bayar() async {
+  Future<void> showCheckoutDialog() async {
+
+    bayarController.clear();
+
+    int total = getTotal();
+
+    await showDialog(
+
+      context: context,
+
+      builder: (context) {
+
+        return StatefulBuilder(
+
+          builder: (context, setModalState) {
+
+            final bayar =
+                int.tryParse(
+                      bayarController.text,
+                    ) ??
+                    0;
+
+            final kembalian =
+                bayar - total;
+
+            return AlertDialog(
+
+              title: const Text(
+                'Pembayaran',
+              ),
+
+              content: Column(
+
+                mainAxisSize:
+                    MainAxisSize.min,
+
+                children: [
+
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment
+                            .spaceBetween,
+
+                    children: [
+
+                      const Text('Total'),
+
+                      Text(
+                        formatRupiah(total),
+                        style: const TextStyle(
+                          fontWeight:
+                              FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  DropdownButtonFormField<String>(
+
+                    value: metodeBayar,
+
+                    items: [
+                      'Cash',
+                      'QRIS',
+                      'Transfer',
+                    ]
+                        .map(
+                          (e) =>
+                              DropdownMenuItem(
+                            value: e,
+                            child: Text(e),
+                          ),
+                        )
+                        .toList(),
+
+                    onChanged: (value) {
+
+                      if (value == null) return;
+
+                      setModalState(() {
+                        metodeBayar = value;
+                      });
+                    },
+
+                    decoration:
+                        const InputDecoration(
+                      labelText:
+                          'Metode Bayar',
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  TextField(
+                    controller:
+                        bayarController,
+
+                    keyboardType:
+                        TextInputType.number,
+
+                    decoration:
+                        const InputDecoration(
+                      labelText:
+                          'Uang Diterima',
+                    ),
+
+                    onChanged: (_) {
+                      setModalState(() {});
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment
+                            .spaceBetween,
+
+                    children: [
+
+                      const Text(
+                        'Kembalian',
+                      ),
+
+                      Text(
+                        formatRupiah(
+                          kembalian < 0
+                              ? 0
+                              : kembalian,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              actions: [
+
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Batal'),
+                ),
+
+                ElevatedButton(
+
+                  onPressed: () async {
+
+                    if (metodeBayar ==
+                            'Cash' &&
+                        bayar < total) {
+
+                      ScaffoldMessenger.of(
+                              context)
+                          .showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Uang kurang',
+                          ),
+                        ),
+                      );
+
+                      return;
+                    }
+
+                    Navigator.pop(context);
+
+                    await bayarDanSimpan(
+                      total,
+                      bayar,
+                      kembalian,
+                    );
+                  },
+
+                  child:
+                      const Text('Simpan'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> bayarDanSimpan(
+    int total,
+    int bayar,
+    int kembalian,
+  ) async {
     if (cart.isEmpty) return;
 
     final total = getTotal();
@@ -151,6 +347,10 @@ class _TransaksiPageState extends State<TransaksiPage> {
             transaksi: {
               'id': transaksiId,
               'total': total,
+              'bayar': bayar,
+              'kembalian': kembalian,
+              'metode_bayar': metodeBayar,
+              'tanggal': DateTime.now().millisecondsSinceEpoch,
             },
 
             items: receiptItems,
@@ -329,7 +529,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
-                  onPressed: cart.isEmpty ? null : bayar,
+                  onPressed: cart.isEmpty ? null : () => showCheckoutDialog(),
                   child: const Text('Bayar'),
                 ),
                 

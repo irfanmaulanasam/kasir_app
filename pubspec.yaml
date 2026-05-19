@@ -40,6 +40,10 @@ dependencies:
   print_bluetooth_thermal: ^1.2.1
   esc_pos_utils_plus: ^2.0.4
   permission_handler: ^12.0.1
+  intl: ^0.20.2
+  pdf: ^3.11.3
+  printing: ^5.14.3
+  path_provider: ^2.1.5
 dev_dependencies:
   flutter_test:
     sdk: flutter

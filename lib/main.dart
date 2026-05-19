@@ -4,9 +4,17 @@ import 'ui/transaksi/transaksi_page.dart';
 import 'ui/transaksi/riwayat_page.dart';
 import 'ui/inventory/inventory_page.dart';
 import 'ui/settings/settings_page.dart';
+import 'package:intl/date_symbol_data_local.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
+  await initializeDateFormatting(
+    'id_ID',
+    null,
+  );
+
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
