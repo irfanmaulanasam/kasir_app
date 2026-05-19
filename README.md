@@ -187,7 +187,7 @@ membuat aplikasi kasir yang benar-benar nyaman dipakai UMKM sehari-hari.
 ## BASIC
 ```bash
 flutter run -t lib/main_basic.dart
-```bash
+bash```
 
 ## ADVANCED
 ```bash
