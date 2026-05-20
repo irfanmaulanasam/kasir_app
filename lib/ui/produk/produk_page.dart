@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/local/produk_repo.dart';
-import '../../widgets/currency_textfield.dart';
+import '../../core/widgets/currency_textfield.dart';
 class ProdukPage extends StatefulWidget {
   const ProdukPage({super.key});
 

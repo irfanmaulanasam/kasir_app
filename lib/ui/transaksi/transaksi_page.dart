@@ -3,7 +3,7 @@ import '../../data/local/produk_repo.dart';
 import '../../data/local/transaksi_repo.dart';
 import '../../data/local/settings_repo.dart';
 import 'receipt_preview_page.dart';
-import '../../widgets/currency_textfield.dart';
+import '../../core/widgets/currency_textfield.dart';
 class TransaksiPage extends StatefulWidget {
   
   const TransaksiPage({super.key});
