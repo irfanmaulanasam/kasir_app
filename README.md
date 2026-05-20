@@ -191,7 +191,7 @@ flutter run -t lib/main_basic.dart
 
 ## ADVANCED
 ```bash
-flutter run -t lib/main_advanced.dart
+flutter run -t lib/main_advance.dart
 ```
 
 ## PRO
