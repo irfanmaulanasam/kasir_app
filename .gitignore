@@ -48,3 +48,47 @@ app.*.map.json
 /.idea/
 /android/.gradle/
 /ios/Pods/
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub/
+build/
+
+# Generated
+*.g.dart
+*.freezed.dart
+
+# Logs
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Android
+android/.gradle/
+android/local.properties
+android/app/debug
+android/app/profile
+android/app/release
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+
+# Coverage
+coverage/
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
+
+# Env
+.env
