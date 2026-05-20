@@ -1,4 +1,4 @@
-# Why This Project Exists
+# Kenapa aku ingin membuat software ini
 
 Kasir App dibuat bukan karena dunia kekurangan aplikasi POS.
 
