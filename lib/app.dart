@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/ui/splash/app_launcher_page.dart';
 
 import 'core/config/flavor_config.dart';
-
-import 'ui/dashboard/dashboard_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -36,7 +35,7 @@ class MyApp extends StatelessWidget {
     ),
   ),
 
-      home: const DashboardPage(),
+      home: const AppLauncherPage(),
     );
   }
 }
