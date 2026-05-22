@@ -12,7 +12,9 @@ class _ProdukPageState extends State<ProdukPage> {
 
   final namaController = TextEditingController();
   final hargaController = TextEditingController();
+  final hargaBeliController = TextEditingController();
   final stokController = TextEditingController();
+  final minimumStokController = TextEditingController();
   final repo = ProdukRepo(); 
 
   Future<List<Map<String, dynamic>>>? produkList;
@@ -33,13 +35,18 @@ class _ProdukPageState extends State<ProdukPage> {
     await repo.insert({
       "nama": namaController.text,
       "harga": int.parse(hargaController.text.replaceAll('.', ''),),
-      "stok": int.parse(stokController.text)
+      "harga_beli": int.parse(hargaBeliController.text.replaceAll('.','')),
+      "stok": int.parse(stokController.text),
+      "minimum_stok":int.tryParse(minimumStokController.text)
+
     });
 
     namaController.clear();
     hargaController.clear();
+    hargaBeliController.clear();
     stokController.clear();
-
+    minimumStokController.clear();
+    
     loadProduk(); // refresh list
   }
 
@@ -60,14 +67,41 @@ class _ProdukPageState extends State<ProdukPage> {
                   controller: namaController,
                   decoration: const InputDecoration(labelText: "Nama Barang"),
                 ),
-                CurrencyTextField(controller: hargaController, label: 'harga Produk'),
+
                 const SizedBox(height: 10),
+
+                CurrencyTextField(
+                  controller: hargaController,
+                  label: 'harga Jual Produk'
+                ),
+
+                const SizedBox(height: 10),
+
+                CurrencyTextField(
+                  controller: hargaBeliController,
+                  label: 'harga Beli Produk'
+                ),
+
+                const SizedBox(height: 10),
+
                 TextField(
                   controller: stokController,
                   decoration: const InputDecoration(labelText: "Stok"),
                   keyboardType: TextInputType.number,
                 ),
+
                 const SizedBox(height: 10),
+
+                TextField(
+                  controller:minimumStokController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Minimum Stok'
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+                
                 ElevatedButton(
                   onPressed: simpan,
                   child: const Text("Simpan"),

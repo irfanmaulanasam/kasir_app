@@ -12,7 +12,9 @@ class ProdukRepo {
       final id = await txn.insert('produk', {
         'nama': data['nama'],
         'harga': data['harga'],
+        'harga_beli': data['harga_beli'],
         'stok': stokAwal,
+        'minimum_stok': data['minimum_stok'],
       });
 
       if (stokAwal > 0) {

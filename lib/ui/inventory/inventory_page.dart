@@ -256,18 +256,25 @@ class _InventoryPageState extends State<InventoryPage> {
               itemBuilder: (context, i) {
                 final produk = data[i];
                 final stok = produk['stok'] as int? ?? 0;
+                final minimum = produk['minimum_stok'] as int? ?? 0;
+                final hampirHabis = stok <= minimum;
 
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   child: ListTile(
                     title: Text(produk['nama'].toString()),
                     subtitle: Text(
-                      '${rupiah(produk['harga'] as int)} | Stok: $stok',
+                      '${rupiah(produk['harga'] as int)} | Stok: $stok ' '• Min: $minimum',
                     ),
                     onTap: () => showLog(produk),
                     trailing: Wrap(
                       spacing: 4,
                       children: [
+                        if (hampirHabis)
+                        const Icon(
+                          Icons.warning_amber_rounded,
+                          color: Colors.orange,
+                        ),
                         IconButton(
                           icon: const Icon(Icons.remove),
                           onPressed: () => showAdjustDialog(produk, tambah: false),
