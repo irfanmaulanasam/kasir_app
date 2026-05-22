@@ -15,7 +15,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE produk(
@@ -24,6 +24,7 @@ class DBHelper {
             harga INTEGER,
             harga_beli INTEGER DEFAULT 0,
             stok INTEGER DEFAULT 0,
+            satuan_dasar TEXT DEFAULT 'pcs',
             minimum_stok INTEGER DEFAULT 0
           )
         ''');
@@ -68,7 +69,10 @@ class DBHelper {
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
-          await db.execute('ALTER TABLE produk ADD COLUMN stok INTEGER DEFAULT 0');
+          await db.execute(
+            'ALTER TABLE produk ADD COLUMN stok INTEGER DEFAULT 0',
+          );
+
           await db.execute('''
             CREATE TABLE IF NOT EXISTS stok_log(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,29 +83,32 @@ class DBHelper {
               tanggal INTEGER
             )
           ''');
-          if (oldVersion < 2) {
+        }
 
-            await db.execute(
-              'ALTER TABLE produk ADD COLUMN harga_beli INTEGER DEFAULT 0'
-            );
+        if (oldVersion < 3) {
+          await db.execute(
+            'ALTER TABLE produk ADD COLUMN harga_beli INTEGER DEFAULT 0',
+          );
 
-            await db.execute(
-              'ALTER TABLE produk ADD COLUMN minimum_stok INTEGER DEFAULT 0'
-            );
-          }
-          if (oldVersion < 3) {
-            await db.execute('''
-              CREATE TABLE IF NOT EXISTS settings(
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nama_toko TEXT,
-                alamat TEXT,
-                telepon TEXT,
-                footer TEXT
-              )
-            ''');
+          await db.execute(
+            'ALTER TABLE produk ADD COLUMN minimum_stok INTEGER DEFAULT 0',
+          );
 
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS settings(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              nama_toko TEXT,
+              alamat TEXT,
+              telepon TEXT,
+              footer TEXT
+            )
+          ''');
+        }
 
-          }
+        if (oldVersion < 4) {
+          await db.execute(
+            "ALTER TABLE produk ADD COLUMN satuan_dasar TEXT DEFAULT 'pcs'",
+          );
         }
       },
     );

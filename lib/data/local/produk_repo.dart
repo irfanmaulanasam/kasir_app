@@ -14,6 +14,7 @@ class ProdukRepo {
         'harga': data['harga'],
         'harga_beli': data['harga_beli'],
         'stok': stokAwal,
+        'satuan_dasar': data['satuan_dasar'] ?? 'pcs',
         'minimum_stok': data['minimum_stok'],
       });
 

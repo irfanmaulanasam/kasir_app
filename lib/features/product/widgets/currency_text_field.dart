@@ -50,7 +50,6 @@ class CurrencyTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         prefixText: 'Rp ',
-        border: const OutlineInputBorder(),
       ),
     );
   }

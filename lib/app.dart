@@ -17,9 +17,24 @@ class MyApp extends StatelessWidget {
       title: FlavorConfig.instance.appTitle,
 
       theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
+
+  useMaterial3: true,
+
+    inputDecorationTheme:
+        const InputDecorationTheme(
+
+      border: OutlineInputBorder(),
+
+      enabledBorder: OutlineInputBorder(),
+
+      focusedBorder: OutlineInputBorder(),
+
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 14,
       ),
+    ),
+  ),
 
       home: const DashboardPage(),
     );
