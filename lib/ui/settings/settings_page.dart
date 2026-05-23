@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/ui/widgets/app_drawer.dart';
 import '../../data/local/settings_repo.dart';
-
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -52,7 +52,9 @@ class _SettingsPageState
       appBar: AppBar(
         title: const Text('Settings Toko'),
       ),
-
+      drawer: const AppDrawer(
+        currentPage: 'SettingsPage',
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),

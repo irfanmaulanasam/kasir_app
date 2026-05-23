@@ -4,6 +4,8 @@ import '../../data/local/transaksi_repo.dart';
 import '../../data/local/settings_repo.dart';
 import 'receipt_preview_page.dart';
 import '../../core/widgets/currency_textfield.dart';
+import '../widgets/app_drawer.dart';
+
 class TransaksiPage extends StatefulWidget {
   
   const TransaksiPage({super.key});
@@ -13,6 +15,101 @@ class TransaksiPage extends StatefulWidget {
 }
 
 class _TransaksiPageState extends State<TransaksiPage> {
+  Future<void> showTambahProdukCepatDialog(String initialName) async {
+    final namaController = TextEditingController(text: initialName.trim());
+    final hargaController = TextEditingController();
+    final stokController = TextEditingController();
+
+    final pageContext = context;
+
+    await showDialog(
+      context: pageContext,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Tambah Produk Baru'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: namaController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nama Produk',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                CurrencyTextField(
+                  controller: hargaController,
+                  label: 'Harga Jual',
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: stokController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Stok Awal',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final nama = namaController.text.trim();
+                final harga = int.tryParse(
+                      hargaController.text.replaceAll('.', '').trim(),
+                    ) ??
+                    0;
+                final stok = int.tryParse(stokController.text.trim()) ?? 0;
+
+                if (nama.isEmpty || harga <= 0) {
+                  ScaffoldMessenger.of(pageContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Nama dan harga wajib diisi'),
+                    ),
+                  );
+                  return;
+                }
+
+                await repo.insert({
+                  'nama': nama,
+                  'harga': harga,
+                  'harga_beli': 0,
+                  'stok': stok,
+                  'satuan_dasar': 'pcs',
+                  'minimum_stok': 0,
+                });
+
+                if (!pageContext.mounted) return;
+
+                Navigator.pop(dialogContext);
+                setState(() {
+                  searchController.clear();
+                  searchQuery = '';
+                });
+                loadProduk();
+
+                ScaffoldMessenger.of(pageContext).showSnackBar(
+                  const SnackBar(
+                    content: Text('Produk baru ditambahkan'),
+                  ),
+                );
+              },
+              child: const Text('Simpan'),
+            ),
+          ],
+        );
+      },
+    );
+
+    namaController.dispose();
+    hargaController.dispose();
+    stokController.dispose();
+  }
   final TextEditingController bayarController =
     TextEditingController();
   String metodeBayar = 'Cash';
@@ -369,13 +466,10 @@ class _TransaksiPageState extends State<TransaksiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Transaksi'),
-        actions: [
-          IconButton(
-            onPressed: loadProduk,
-            icon: const Icon(Icons.refresh),
-          ),
-        ],
+        title: const Text('Transaksi')
+      ),
+      drawer: const AppDrawer(
+        currentPage: 'Transaksi',
       ),
       body: SafeArea(
         minimum: const EdgeInsets.fromLTRB(10, 5, 10, 24),
@@ -422,7 +516,22 @@ class _TransaksiPageState extends State<TransaksiPage> {
                 }).toList();
 
                 if (filteredData.isEmpty) {
-                  return const Center(child: Text('Produk tidak ditemukan'));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Produk tidak ditemukan'),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            showTambahProdukCepatDialog(searchController.text);
+                          },
+                          icon: const Icon(Icons.add),
+                          label: const Text('Tambah Produk Baru'),
+                        ),
+                      ],
+                    ),
+                  );
                 }
 
                 return ListView.builder(

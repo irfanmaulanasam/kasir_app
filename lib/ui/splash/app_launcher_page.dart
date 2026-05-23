@@ -1,35 +1,28 @@
 import 'package:flutter/material.dart';
 
 import '../../data/local/settings_repo.dart';
+import '../../data/local/produk_repo.dart';
 
 import '../settings/setup_store_page.dart';
+import '../produk/produk_page.dart';
 import '../transaksi/transaksi_page.dart';
 
-class AppLauncherPage
-    extends StatefulWidget {
-
-  const AppLauncherPage({
-    super.key,
-  });
+class AppLauncherPage extends StatefulWidget {
+  const AppLauncherPage({super.key});
 
   @override
-  State<AppLauncherPage>
-      createState() =>
-          _AppLauncherPageState();
+  State<AppLauncherPage> createState() => _AppLauncherPageState();
 }
 
-class _AppLauncherPageState
-    extends State<AppLauncherPage> {
-
+class _AppLauncherPageState extends State<AppLauncherPage> {
   @override
   void initState() {
     super.initState();
-    checkStore();
+    checkAppState();
   }
 
-  Future<void> checkStore() async {
+  Future<void> checkAppState() async {
     final settings = await SettingsRepo().getSettings();
-
     final namaToko = settings?['nama_toko'] ?? '';
 
     if (!mounted) return;
@@ -37,29 +30,33 @@ class _AppLauncherPageState
     if (namaToko.toString().trim().isEmpty) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const SetupStorePage(),
-        ),
+        MaterialPageRoute(builder: (_) => const SetupStorePage()),
       );
-    } else {
+      return;
+    }
+
+    final produkList = await ProdukRepo().getAll();
+
+    if (!mounted) return;
+
+    if (produkList.isEmpty) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const TransaksiPage(),
-        ),
+        MaterialPageRoute(builder: (_) => const ProdukPage()),
       );
+      return;
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const TransaksiPage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
     return const Scaffold(
-
-      body: Center(
-        child:
-            CircularProgressIndicator(),
-      ),
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/ui/widgets/app_drawer.dart';
 import '../../data/local/transaksi_repo.dart';
 import '../transaksi/detail_transaksi_page.dart';
 class RiwayatPage extends StatefulWidget {
@@ -40,7 +41,9 @@ class _RiwayatPageState extends State<RiwayatPage> {
       appBar: AppBar(
         title: const Text('Riwayat Transaksi'),
       ),
-
+      drawer: AppDrawer(
+        currentPage: 'Riwayat',
+      ),
       body: SafeArea(
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: transaksiList,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/ui/widgets/app_drawer.dart';
 import '../../data/local/produk_repo.dart';
 
 class InventoryPage extends StatefulWidget {
@@ -234,6 +235,9 @@ class _InventoryPageState extends State<InventoryPage> {
           ),
         ],
       ),
+      drawer: AppDrawer(
+        currentPage: 'Inventory',
+      ),
       body: SafeArea(
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: produkList,
@@ -257,7 +261,7 @@ class _InventoryPageState extends State<InventoryPage> {
                 final produk = data[i];
                 final stok = produk['stok'] as int? ?? 0;
                 final minimum = produk['minimum_stok'] as int? ?? 0;
-                final hampirHabis = stok <= minimum;
+                final hampirHabis = minimum > 0 && stok <= minimum;
 
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

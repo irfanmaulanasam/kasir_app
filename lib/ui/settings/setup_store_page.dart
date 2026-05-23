@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/ui/splash/app_launcher_page.dart';
 
 import '../../data/local/settings_repo.dart';
-import '../transaksi/transaksi_page.dart';
 
 class SetupStorePage extends StatefulWidget {
   const SetupStorePage({super.key});
@@ -51,7 +51,7 @@ class _SetupStorePageState
 
       MaterialPageRoute(
         builder: (_) =>
-            const TransaksiPage(),
+            const AppLauncherPage(),
       ),
     );
   }

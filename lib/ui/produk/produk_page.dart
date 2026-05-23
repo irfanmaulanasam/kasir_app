@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/ui/splash/app_launcher_page.dart';
+import 'package:kasir_app/ui/widgets/app_drawer.dart';
 import '../../data/local/produk_repo.dart';
 import '../../core/widgets/currency_textfield.dart';
 import '../../features/product/widgets/stock_input_field.dart';
@@ -77,6 +79,8 @@ class _ProdukPageState extends State<ProdukPage> {
       "minimum_stok": minimumStok,
     });
 
+    final semuaProduk = await repo.getAll();
+    final isFirstProduct = semuaProduk.length == 1;
     namaController.clear();
     hargaController.clear();
     hargaBeliController.clear();
@@ -92,7 +96,22 @@ class _ProdukPageState extends State<ProdukPage> {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Produk berhasil disimpan')),
+      SnackBar(
+        content: const Text('Produk berhasil disimpan'),
+        action: isFirstProduct
+        ? SnackBarAction(
+            label: 'Buka Kasir',
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AppLauncherPage(),
+                ),
+              );
+            },
+          )
+        : null,
+        ),
     );
   }
 
@@ -135,7 +154,15 @@ class _ProdukPageState extends State<ProdukPage> {
                 if (!pageContext.mounted) return;
 
                 Navigator.pop(dialogContext);
-                loadProduk();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
+
+                  loadProduk();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Stok berhasil diperbarui')),
+                  );
+                });
               },
               child: const Text('Simpan'),
             ),
@@ -265,6 +292,7 @@ class _ProdukPageState extends State<ProdukPage> {
       appBar: AppBar(
         title: const Text("Produk"),
       ),
+      drawer: AppDrawer(currentPage: 'Inventory'),
       body: SafeArea(
         child: Column(
           children: [
