@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/widgets/currency_text_field.dart';
+import '../../../../core/widgets/currency_text_field.dart';
 
 class PaymentResult {
   final int total;

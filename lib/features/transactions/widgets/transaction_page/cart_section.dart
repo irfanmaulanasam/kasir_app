@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/cart_item.dart';
+import '../../models/cart_item.dart';
 
 class CartSection extends StatelessWidget {
   final Map<int, CartItem> cart;
