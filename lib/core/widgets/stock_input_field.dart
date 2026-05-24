@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/utils/unit_converter.dart';
+import '../../../core/utils/unit_converter.dart';
 
 class StockInputResult {
   final double baseStock;

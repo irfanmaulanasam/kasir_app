@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kasir_app/ui/splash/app_launcher_page.dart';
-import 'package:kasir_app/ui/widgets/app_drawer.dart';
+import 'package:kasir_app/features/splash/app_launcher_page.dart';
+import 'package:kasir_app/features/widgets/app_drawer.dart';
+
+import '../../core/widgets/currency_text_field.dart';
+import '../../core/widgets/stock_input_field.dart';
 import '../../data/local/produk_repo.dart';
-import '../../core/widgets/currency_textfield.dart';
-import '../../features/product/widgets/stock_input_field.dart';
 
 class ProdukPage extends StatefulWidget {
   const ProdukPage({super.key});
@@ -18,17 +19,17 @@ class _ProdukPageState extends State<ProdukPage> {
   final hargaBeliController = TextEditingController();
   final minimumStokController = TextEditingController();
 
-  double stockDasar = 0;
-  String satuanDasar = 'pcs';
-
   final repo = ProdukRepo();
 
   Future<List<Map<String, dynamic>>>? produkList;
 
+  double stockDasar = 0;
+  String satuanDasar = 'pcs';
+
   @override
   void initState() {
     super.initState();
-    loadProduk();
+    produkList = repo.getAll();
   }
 
   @override
@@ -40,14 +41,23 @@ class _ProdukPageState extends State<ProdukPage> {
     super.dispose();
   }
 
-  void loadProduk() {
+  int parseCurrency(String value) {
+    return int.tryParse(value.replaceAll('.', '').trim()) ?? 0;
+  }
+
+  String formatRupiah(dynamic value) {
+    final number = value is int ? value : int.tryParse(value.toString()) ?? 0;
+
+    return 'Rp ${number.toString().replaceAllMapped(
+          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (match) => '${match[1]}.',
+        )}';
+  }
+
+  void refreshProduk() {
     setState(() {
       produkList = repo.getAll();
     });
-  }
-
-  int parseCurrency(String value) {
-    return int.tryParse(value.replaceAll('.', '').trim()) ?? 0;
   }
 
   Future<void> simpan() async {
@@ -71,16 +81,19 @@ class _ProdukPageState extends State<ProdukPage> {
     }
 
     await repo.insert({
-      "nama": nama,
-      "harga": hargaJual,
-      "harga_beli": hargaBeli,
-      "stok": stockDasar.toInt(),
-      "satuan_dasar": satuanDasar,
-      "minimum_stok": minimumStok,
+      'nama': nama,
+      'harga': hargaJual,
+      'harga_beli': hargaBeli,
+      'stok': stockDasar.toInt(),
+      'satuan_dasar': satuanDasar,
+      'minimum_stok': minimumStok,
     });
 
     final semuaProduk = await repo.getAll();
     final isFirstProduct = semuaProduk.length == 1;
+
+    if (!mounted) return;
+
     namaController.clear();
     hargaController.clear();
     hargaBeliController.clear();
@@ -89,49 +102,49 @@ class _ProdukPageState extends State<ProdukPage> {
     setState(() {
       stockDasar = 0;
       satuanDasar = 'pcs';
+      produkList = repo.getAll();
     });
-
-    loadProduk();
-
-    if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Produk berhasil disimpan'),
         action: isFirstProduct
-        ? SnackBarAction(
-            label: 'Buka Kasir',
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const AppLauncherPage(),
-                ),
-              );
-            },
-          )
-        : null,
-        ),
+            ? SnackBarAction(
+                label: 'Buka Kasir',
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AppLauncherPage(),
+                    ),
+                  );
+                },
+              )
+            : null,
+      ),
     );
   }
 
   Future<void> showTambahStokDialog(Map<String, dynamic> produk) async {
     final qtyController = TextEditingController();
-    final pageContext = context;
 
     await showDialog(
-      context: pageContext,
+      context: context,
       builder: (dialogContext) {
         return AlertDialog(
           title: Text('Tambah stok ${produk['nama']}'),
           content: TextField(
             controller: qtyController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Qty'),
+            decoration: const InputDecoration(
+              labelText: 'Qty',
+            ),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
               child: const Text('Batal'),
             ),
             ElevatedButton(
@@ -139,8 +152,10 @@ class _ProdukPageState extends State<ProdukPage> {
                 final qty = int.tryParse(qtyController.text.trim()) ?? 0;
 
                 if (qty <= 0) {
-                  ScaffoldMessenger.of(pageContext).showSnackBar(
-                    const SnackBar(content: Text('Qty harus lebih dari 0')),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Qty harus lebih dari 0'),
+                    ),
                   );
                   return;
                 }
@@ -151,18 +166,20 @@ class _ProdukPageState extends State<ProdukPage> {
                   catatan: 'stok masuk manual',
                 );
 
-                if (!pageContext.mounted) return;
-
+                if(!dialogContext.mounted) return;
                 Navigator.pop(dialogContext);
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!mounted) return;
+                if (!mounted) return;
 
-                  loadProduk();
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Stok berhasil diperbarui')),
-                  );
+                setState(() {
+                  produkList = repo.getAll();
                 });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Stok berhasil diperbarui'),
+                  ),
+                );
               },
               child: const Text('Simpan'),
             ),
@@ -170,17 +187,6 @@ class _ProdukPageState extends State<ProdukPage> {
         );
       },
     );
-
-    qtyController.dispose();
-  }
-
-  String formatRupiah(dynamic value) {
-    final number = value is int ? value : int.tryParse(value.toString()) ?? 0;
-
-    return 'Rp ${number.toString().replaceAllMapped(
-          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-          (match) => '${match[1]}.',
-        )}';
   }
 
   Widget buildFormInput() {
@@ -190,7 +196,9 @@ class _ProdukPageState extends State<ProdukPage> {
         children: [
           TextField(
             controller: namaController,
-            decoration: const InputDecoration(labelText: "Nama Barang"),
+            decoration: const InputDecoration(
+              labelText: 'Nama Barang',
+            ),
           ),
           const SizedBox(height: 10),
           CurrencyTextField(
@@ -213,7 +221,9 @@ class _ProdukPageState extends State<ProdukPage> {
           TextField(
             controller: minimumStokController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Minimum Stok'),
+            decoration: const InputDecoration(
+              labelText: 'Minimum Stok',
+            ),
           ),
         ],
       ),
@@ -226,7 +236,7 @@ class _ProdukPageState extends State<ProdukPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: simpan,
-        child: const Text("Simpan"),
+        child: const Text('Simpan'),
       ),
     );
   }
@@ -237,17 +247,23 @@ class _ProdukPageState extends State<ProdukPage> {
         future: produkList,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
           }
 
           final data = snapshot.data ?? [];
 
           if (data.isEmpty) {
-            return const Center(child: Text("Belum ada produk"));
+            return const Center(
+              child: Text('Belum ada produk'),
+            );
           }
 
           return ListView.builder(
@@ -259,7 +275,10 @@ class _ProdukPageState extends State<ProdukPage> {
               final stokKritis = minimumStok > 0 && stok <= minimumStok;
 
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 child: ListTile(
                   title: Text(produk['nama'].toString()),
                   subtitle: Text(
@@ -290,9 +309,11 @@ class _ProdukPageState extends State<ProdukPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Produk"),
+        title: const Text('Produk'),
       ),
-      drawer: AppDrawer(currentPage: 'Inventory'),
+      drawer: const AppDrawer(
+        currentPage: 'Produk',
+      ),
       body: SafeArea(
         child: Column(
           children: [

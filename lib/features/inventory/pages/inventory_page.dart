@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kasir_app/ui/widgets/app_drawer.dart';
-import '../../data/local/produk_repo.dart';
+import 'package:kasir_app/features/widgets/app_drawer.dart';
+import '../../../data/local/produk_repo.dart';
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});

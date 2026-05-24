@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kasir_app/ui/widgets/app_drawer.dart';
-import '../../data/local/transaksi_repo.dart';
-import '../transaksi/detail_transaksi_page.dart';
+import 'package:kasir_app/features/widgets/app_drawer.dart';
+import '../../../data/local/transaksi_repo.dart';
+import 'detail_transaction_page.dart';
 class RiwayatPage extends StatefulWidget {
   const RiwayatPage({super.key});
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kasir_app/ui/splash/app_launcher_page.dart';
+import 'package:kasir_app/features/splash/app_launcher_page.dart';
 
 import '../../data/local/settings_repo.dart';
 

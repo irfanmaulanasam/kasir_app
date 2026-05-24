@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kasir_app/ui/splash/app_launcher_page.dart';
+import 'package:kasir_app/features/splash/app_launcher_page.dart';
 
-import 'core/config/flavor_config.dart';
+import '../core/config/flavor_config.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

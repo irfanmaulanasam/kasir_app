@@ -4,8 +4,8 @@ import '../../data/local/settings_repo.dart';
 import '../../data/local/produk_repo.dart';
 
 import '../settings/setup_store_page.dart';
-import '../produk/produk_page.dart';
-import '../transaksi/transaksi_page.dart';
+import '../product/product_page.dart';
+import '../transactions/pages/transaction_page.dart';
 
 class AppLauncherPage extends StatefulWidget {
   const AppLauncherPage({super.key});

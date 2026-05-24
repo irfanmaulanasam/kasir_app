@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../transaksi/transaksi_page.dart';
-import '../produk/produk_page.dart';
-import '../transaksi/riwayat_page.dart';
+import '../transactions/pages/transaction_page.dart';
+import '../product/product_page.dart';
+import '../transactions/pages/history_page.dart';
 import '../settings/settings_page.dart';
 
 class AppDrawer extends StatelessWidget {

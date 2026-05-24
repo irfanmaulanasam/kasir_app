@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/local/transaksi_repo.dart';
+import '../../../data/local/transaksi_repo.dart';
 
 class DetailTransaksiPage extends StatefulWidget {
 

@@ -1,4 +1,4 @@
-import '../../features/product/models/unit_model.dart';
+import '../../features/inventory/models/unit_model.dart';
 
 class UnitConstants {
 

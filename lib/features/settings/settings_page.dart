@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kasir_app/ui/widgets/app_drawer.dart';
+import 'package:kasir_app/features/widgets/app_drawer.dart';
 import '../../data/local/settings_repo.dart';
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
