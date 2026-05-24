@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kasir_app/features/widgets/app_drawer.dart';
+
 import '../../../data/local/transaksi_repo.dart';
+import '../widgets/history/transaction_history_tile.dart';
 import 'detail_transaction_page.dart';
+
 class RiwayatPage extends StatefulWidget {
   const RiwayatPage({super.key});
 
@@ -10,7 +13,6 @@ class RiwayatPage extends StatefulWidget {
 }
 
 class _RiwayatPageState extends State<RiwayatPage> {
-
   final TransaksiRepo repo = TransaksiRepo();
 
   Future<List<Map<String, dynamic>>>? transaksiList;
@@ -27,31 +29,20 @@ class _RiwayatPageState extends State<RiwayatPage> {
     });
   }
 
-  String formatRupiah(int value) {
-    return 'Rp ${value.toString().replaceAllMapped(
-      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-      (match) => '${match[1]}.',
-    )}';
-  }
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Riwayat Transaksi'),
       ),
-      drawer: AppDrawer(
+      drawer: const AppDrawer(
         currentPage: 'Riwayat',
       ),
       body: SafeArea(
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: transaksiList,
-
           builder: (context, snapshot) {
-
-            if (snapshot.connectionState ==
-                ConnectionState.waiting) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -59,9 +50,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
 
             if (snapshot.hasError) {
               return Center(
-                child: Text(
-                  'Error: ${snapshot.error}',
-                ),
+                child: Text('Error: ${snapshot.error}'),
               );
             }
 
@@ -75,45 +64,21 @@ class _RiwayatPageState extends State<RiwayatPage> {
 
             return ListView.builder(
               itemCount: data.length,
-
               itemBuilder: (context, index) {
-
                 final trx = data[index];
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => DetailTransaksiPage(
-                            transaksiId: trx['id'],
-                          ),
+                return TransactionHistoryTile(
+                  transaksi: trx,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => DetailTransaksiPage(
+                          transaksiId: trx['id'],
                         ),
-                      );
-                    },
-                    leading: CircleAvatar(
-                      child: Text(
-                        trx['id'].toString(),
                       ),
-                    ),
-
-                    title: Text(
-                      formatRupiah(trx['total']),
-                    ),
-
-                    subtitle: Text(
-                      DateTime.fromMillisecondsSinceEpoch(
-                        trx['tanggal'],
-                      ).toString(),
-                    ),
-
-                  ),
+                    );
+                  },
                 );
               },
             );
