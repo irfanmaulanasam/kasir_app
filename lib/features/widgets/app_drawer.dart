@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../transactions/pages/transaction_page.dart';
 import '../product/product_page.dart';
-import '../transactions/pages/history_page.dart';
+import '../transactions/pages/tansaction_history_page.dart';
 import '../settings/settings_page.dart';
 
 class AppDrawer extends StatelessWidget {
