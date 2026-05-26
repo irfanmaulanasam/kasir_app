@@ -88,9 +88,14 @@ class _InventoryPageState extends State<InventoryPage> {
                       labelText: 'Alasan',
                     ),
                   ),
+                  const SizedBox (height:10),
                   TextField(
                     controller: catatanController,
-                    decoration: const InputDecoration(labelText: 'Catatan Tambahan'),
+                    decoration: 
+                    const InputDecoration(
+                      labelText: 'Catatan Tambahan',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ],
               ),
@@ -135,7 +140,10 @@ class _InventoryPageState extends State<InventoryPage> {
 
                       if (!pageContext.mounted) return;
                       Navigator.of(pageContext).pop();
+
+                      if( !mounted) return;
                       loadData(); // Memperbarui data list setelah sukses
+
                     } catch (e) {
                       if (!pageContext.mounted) return;
                       ScaffoldMessenger.of(pageContext).showSnackBar(
@@ -148,6 +156,56 @@ class _InventoryPageState extends State<InventoryPage> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  Future<void> showEditMinimumStockDialog(
+    Map<String, dynamic> produk,
+  ) async {
+    final controller = TextEditingController(
+      text: (produk['minimum_stok'] ?? 0).toString(),
+    );
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Edit Minimum Stok'),
+          content: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Minimum Stok',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final value = int.tryParse(controller.text.trim()) ?? 0;
+
+                await repo.updateMinimumStock(
+                  produk['id'] as int,
+                  value,
+                );
+
+                if (!dialogContext.mounted) return;
+                Navigator.pop(dialogContext);
+
+                if (!mounted) return;
+                loadData();
+              },
+              child: const Text('Simpan'),
+            ),
+          ],
         );
       },
     );
@@ -265,27 +323,65 @@ class _InventoryPageState extends State<InventoryPage> {
 
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  child: ListTile(
-                    title: Text(produk['nama'].toString()),
-                    subtitle: Text(
-                      '${rupiah(produk['harga'] as int)} | Stok: $stok ' '• Min: $minimum',
-                    ),
-                    onTap: () => showLog(produk),
-                    trailing: Wrap(
-                      spacing: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (hampirHabis)
-                        const Icon(
-                          Icons.warning_amber_rounded,
-                          color: Colors.orange,
+                        Row(
+                          children: [
+                            Icon(
+                              hampirHabis
+                                  ? Icons.warning_amber_rounded
+                                  : Icons.inventory_2_outlined,
+                              color: hampirHabis ? Colors.orange : null,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                produk['nama'].toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.remove),
-                          onPressed: () => showAdjustDialog(produk, tambah: false),
+                        const SizedBox(height: 6),
+                        Text(
+                          '${rupiah(produk['harga'] as int)} | Stok: $stok • Min: $minimum',
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () => showAdjustDialog(produk, tambah: true),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () => showAdjustDialog(produk, tambah: false),
+                                icon: const Icon(Icons.remove),
+                                label: const Text('Kurangi'),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => showAdjustDialog(produk, tambah: true),
+                                icon: const Icon(Icons.add),
+                                label: const Text('Tambah'),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: () => showEditMinimumStockDialog(produk),
+                              icon: const Icon(Icons.edit_note),
+                              tooltip: 'Edit Minimum Stok',
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: () => showLog(produk),
+                              icon: const Icon(Icons.history),
+                              tooltip: 'Histori',
+                            ),
+                          ],
                         ),
                       ],
                     ),

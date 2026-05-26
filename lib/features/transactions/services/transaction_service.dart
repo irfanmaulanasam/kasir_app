@@ -17,8 +17,14 @@ class TransactionService {
     final id = produk['id'] as int;
     final nama = produk['nama'].toString();
     final harga = produk['harga'] as int;
+    final stok = produk['stok'] as int? ?? 0;
 
     final existing = newCart[id];
+    final currentQty = existing?.qty ?? 0;
+
+    if (currentQty + 1 > stok) {
+      throw Exception('Stok tidak cukup');
+    }
 
     if (existing == null) {
       newCart[id] = CartItem(
@@ -35,7 +41,7 @@ class TransactionService {
 
     return newCart;
   }
-
+  
   static Map<int, CartItem> decreaseQty({
     required Map<int, CartItem> cart,
     required int productId,

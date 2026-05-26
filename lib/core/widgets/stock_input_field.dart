@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../core/utils/unit_converter.dart';
 
 class StockInputResult {
@@ -32,11 +31,7 @@ class _StockInputFieldState extends State<StockInputField> {
   final units = [
     'pcs',
     'lusin',
-    'renceng',
-    'gram',
-    'kg',
-    'ml',
-    'liter',
+    'kodi',
   ];
 
   void updateStock() {

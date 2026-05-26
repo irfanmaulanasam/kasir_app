@@ -253,6 +253,9 @@ class _TransaksiPageState extends State<TransaksiPage> {
               produkList: produkList,
               searchQuery: searchQuery,
               formatRupiah: formatRupiah,
+              cartQtyByProductId: cart.map(
+                (key, value) => MapEntry(key, value.qty),
+              ),
               onTapProduk: tambahKeCart,
               onTambahProdukBaru: () {
                 showTambahProdukCepatDialog(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kasir_app/features/splash/app_launcher_page.dart';
 import 'package:kasir_app/features/widgets/app_drawer.dart';
 
+import '../../core/formatters/currency_formatter.dart';
 import '../../core/widgets/currency_text_field.dart';
 import '../../core/widgets/stock_input_field.dart';
 import '../../data/local/produk_repo.dart';
@@ -43,15 +44,6 @@ class _ProdukPageState extends State<ProdukPage> {
 
   int parseCurrency(String value) {
     return int.tryParse(value.replaceAll('.', '').trim()) ?? 0;
-  }
-
-  String formatRupiah(dynamic value) {
-    final number = value is int ? value : int.tryParse(value.toString()) ?? 0;
-
-    return 'Rp ${number.toString().replaceAllMapped(
-          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-          (match) => '${match[1]}.',
-        )}';
   }
 
   void refreshProduk() {
@@ -122,70 +114,6 @@ class _ProdukPageState extends State<ProdukPage> {
               )
             : null,
       ),
-    );
-  }
-
-  Future<void> showTambahStokDialog(Map<String, dynamic> produk) async {
-    final qtyController = TextEditingController();
-
-    await showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text('Tambah stok ${produk['nama']}'),
-          content: TextField(
-            controller: qtyController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Qty',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: const Text('Batal'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final qty = int.tryParse(qtyController.text.trim()) ?? 0;
-
-                if (qty <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Qty harus lebih dari 0'),
-                    ),
-                  );
-                  return;
-                }
-
-                await repo.tambahStok(
-                  produk['id'] as int,
-                  qty,
-                  catatan: 'stok masuk manual',
-                );
-
-                if(!dialogContext.mounted) return;
-                Navigator.pop(dialogContext);
-                if (!mounted) return;
-
-
-                setState(() {
-                  produkList = repo.getAll();
-                });
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Stok berhasil diperbarui'),
-                  ),
-                );
-              },
-              child: const Text('Simpan'),
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -282,20 +210,17 @@ class _ProdukPageState extends State<ProdukPage> {
                 child: ListTile(
                   title: Text(produk['nama'].toString()),
                   subtitle: Text(
-                    '${formatRupiah(produk['harga'])} | '
+                    '${CurrencyFormatter.format(produk["harga"])} | '
                     'Stok: $stok | '
                     'Min: $minimumStok',
                   ),
-                  leading: stokKritis
+                  leading: const Icon(Icons.inventory_2_outlined),
+                  trailing: stokKritis
                       ? const Icon(
                           Icons.warning_amber_rounded,
                           color: Colors.orange,
                         )
-                      : const Icon(Icons.inventory_2_outlined),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () => showTambahStokDialog(produk),
-                  ),
+                      : const Icon(Icons.chevron_right),
                 ),
               );
             },

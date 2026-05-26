@@ -37,6 +37,22 @@ class ProdukRepo {
     return db.query('produk', orderBy: 'nama ASC');
   }
 
+  Future<void> updateMinimumStock(
+    int produkId,
+    int minimumStock,
+  ) async {
+    final db = await _dbHelper.db;
+
+    await db.update(
+      'produk',
+      {
+        'minimum_stok': minimumStock,
+      },
+      where: 'id = ?',
+      whereArgs: [produkId],
+    );
+  }
+
   Future<void> tambahStok(int produkId, int qty, {String catatan = ''}) async {
     final db = await _dbHelper.db;
 

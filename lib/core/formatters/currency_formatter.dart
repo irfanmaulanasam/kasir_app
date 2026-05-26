@@ -1,20 +1,33 @@
-import 'package:intl/intl.dart';
-
 class CurrencyFormatter {
+  static String format(dynamic value) {
+    final number = value is int
+        ? value
+        : int.tryParse(
+              value.toString().replaceAll('.', '').replaceAll('Rp', '').trim(),
+            ) ??
+            0;
 
-  static String format(String value) {
+    return 'Rp ${number.toString().replaceAllMapped(
+          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (match) => '${match[1]}.',
+        )}';
+  }
 
-    if (value.isEmpty) return '';
+  static String formatInput(String value) {
+    final number = value.replaceAll('.', '').trim();
 
-    final number =
-        int.tryParse(
-          value.replaceAll('.', ''),
-        ) ?? 0;
+    if (number.isEmpty) return '';
 
-    return NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: '',
-      decimalDigits: 0,
-    ).format(number);
+    return number.replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+      (match) => '${match[1]}.',
+    );
+  }
+
+  static int parse(String value) {
+    return int.tryParse(
+          value.replaceAll('.', '').replaceAll('Rp', '').trim(),
+        ) ??
+        0;
   }
 }

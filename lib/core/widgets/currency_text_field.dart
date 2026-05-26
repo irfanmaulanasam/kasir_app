@@ -25,7 +25,7 @@ class CurrencyTextField extends StatelessWidget {
         FilteringTextInputFormatter.digitsOnly,
         TextInputFormatter.withFunction(
           (oldValue, newValue) {
-            final text = CurrencyFormatter.format(newValue.text);
+            final text = CurrencyFormatter.formatInput(newValue.text);
 
             return TextEditingValue(
               text: text,

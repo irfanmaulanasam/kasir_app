@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class ProductListSection extends StatelessWidget {
   final Future<List<Map<String, dynamic>>>? produkList;
+  final Map<int, int> cartQtyByProductId;
   final String searchQuery;
 
   final String Function(int value) formatRupiah;
@@ -17,6 +18,7 @@ class ProductListSection extends StatelessWidget {
     required this.searchQuery,
     required this.formatRupiah,
     required this.onTapProduk,
+    required this.cartQtyByProductId,
     required this.onTambahProdukBaru,
   });
 
@@ -77,6 +79,10 @@ class ProductListSection extends StatelessWidget {
           itemCount: filteredData.length,
           itemBuilder: (context, index) {
             final produk = filteredData[index];
+            final id = produk['id'] as int;
+            final stok = produk['stok'] as int? ?? 0;
+            final currentQty = cartQtyByProductId[id] ?? 0;
+            final canAdd = stok > 0 && currentQty < stok;
 
             return Card(
               margin:
@@ -85,30 +91,18 @@ class ProductListSection extends StatelessWidget {
                 vertical: 6,
               ),
               child: ListTile(
-                enabled:
-                    (produk['stok'] ?? 0) > 0,
-
+                enabled: canAdd,
                 title: Text(
                   produk['nama'].toString(),
                 ),
-
                 subtitle: Text(
                   '${formatRupiah(produk['harga'] as int)} • '
-                  'Stok: ${produk['stok'] ?? 0}',
+                  'Stok: $stok • Di cart: $currentQty',
                 ),
-
                 trailing: Icon(
-                  (produk['stok'] ?? 0) > 0
-                      ? Icons.add_circle_outline
-                      : Icons.block,
+                  canAdd ? Icons.add_circle_outline : Icons.block,
                 ),
-
-                onTap:
-                    (produk['stok'] ?? 0) <= 0
-                        ? null
-                        : () => onTapProduk(
-                              produk,
-                            ),
+                onTap: canAdd ? () => onTapProduk(produk) : null,
               ),
             );
           },

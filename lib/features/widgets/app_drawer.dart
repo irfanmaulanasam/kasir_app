@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/features/inventory/pages/inventory_page.dart';
 
 import '../transactions/pages/transaction_page.dart';
 import '../product/product_page.dart';
@@ -82,9 +83,16 @@ class AppDrawer extends StatelessWidget {
 
           buildMenu(
             context: context,
+            title: 'Tambah Produk',
+            icon: Icons.add,
+            page: const ProdukPage()
+          ),
+          
+          buildMenu(
+            context: context,
             title: 'Inventory',
             icon: Icons.inventory_2,
-            page: const ProdukPage(),
+            page: const InventoryPage(),
           ),
 
           buildMenu(

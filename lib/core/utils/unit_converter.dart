@@ -4,23 +4,12 @@ class UnitConverter {
     required String unit,
   }) {
     switch (unit) {
-      case 'kg':
-        return value * 1000; // simpan gram
 
-      case 'gram':
-        return value;
-
-      case 'liter':
-        return value * 1000; // simpan ml
-
-      case 'ml':
-        return value;
+      case 'kodi':
+        return value *20;
 
       case 'lusin':
-        return value * 12; // simpan pcs
-
-      case 'renceng':
-        return value * 10; // simpan pcs / sachet
+        return value * 12; 
 
       case 'pcs':
         return value;
