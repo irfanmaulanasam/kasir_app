@@ -53,7 +53,7 @@ class _SettingsPageState
         title: const Text('Settings Toko'),
       ),
       drawer: const AppDrawer(
-        currentPage: 'SettingsPage',
+        currentPage: 'Settings',
       ),
       body: SafeArea(
         child: Padding(
