@@ -1,20 +1,19 @@
-# Roadmap
+# BASIC
 
-## Phase 1 — Core Stability
-- [x] Transaction flow
-- [x] Inventory basic
-- [ ] Receipt printing stabilization
+- [x] Stabilisasi transaksi
+- [x] Stabilisasi inventory
+- [x] Refactor UI
+- [x] Bug fixing
 
----
+# ADVANCED
 
-## Phase 2 — Operational Enhancement
 - [ ] Barcode scanner
 - [ ] QR scanner
 - [ ] Customer management
 
----
+# PRO
 
-## Phase 3 — Business Scaling
 - [ ] Cloud sync
 - [ ] Multi device
 - [ ] Multi cashier
+- [ ] Owner dashboard

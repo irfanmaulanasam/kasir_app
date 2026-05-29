@@ -18,6 +18,7 @@ fast workflow, and lightweight performance over unnecessary complexity.
 - [Features](docs/FEATURES.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Changelog](docs/CHANGELOG.md)
+- [Why](docs/WHY.md)
 
 ## Run App
 
