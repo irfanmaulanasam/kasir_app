@@ -161,56 +161,6 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  Future<void> showEditMinimumStockDialog(
-    Map<String, dynamic> produk,
-  ) async {
-    final controller = TextEditingController(
-      text: (produk['minimum_stok'] ?? 0).toString(),
-    );
-
-    await showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Edit Minimum Stok'),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Minimum Stok',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: const Text('Batal'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final value = int.tryParse(controller.text.trim()) ?? 0;
-
-                await repo.updateMinimumStock(
-                  produk['id'] as int,
-                  value,
-                );
-
-                if (!dialogContext.mounted) return;
-                Navigator.pop(dialogContext);
-
-                if (!mounted) return;
-                loadData();
-              },
-              child: const Text('Simpan'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future<void> showLog(Map<String, dynamic> produk) async {
     final logs = await repo.getStockLog(produk['id'] as int);
 
@@ -275,6 +225,56 @@ class _InventoryPageState extends State<InventoryPage> {
                   ),
                 );
               }),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showEditMinimumStockDialog(
+    Map<String, dynamic> produk,
+  ) async {
+    final controller = TextEditingController(
+      text: (produk['minimum_stok'] ?? 0).toString(),
+    );
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Edit Minimum Stok'),
+          content: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Minimum Stok',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final value = int.tryParse(controller.text.trim()) ?? 0;
+
+                await repo.updateMinimumStock(
+                  produk['id'] as int,
+                  value,
+                );
+
+                if (!dialogContext.mounted) return;
+                Navigator.pop(dialogContext);
+
+                if (!mounted) return;
+                loadData();
+              },
+              child: const Text('Simpan'),
+            ),
           ],
         );
       },
@@ -368,6 +368,12 @@ class _InventoryPageState extends State<InventoryPage> {
                                 icon: const Icon(Icons.add),
                                 label: const Text('Tambah'),
                               ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: () => showEditMinimumStockDialog(produk),
+                              icon: const Icon(Icons.edit_note),
+                              tooltip: 'Edit Minimum Stok',
                             ),
                             const SizedBox(width: 8),
                             IconButton(
