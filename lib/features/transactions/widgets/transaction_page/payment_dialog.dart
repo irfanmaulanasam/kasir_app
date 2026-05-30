@@ -56,7 +56,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
   }
 
   int get kembalian {
-    return bayar - widget.total;
+    final result = bayar - widget.total;
+    return result < 0 ? 0 : result;
   }
 
   bool get isTempo {
@@ -163,37 +164,40 @@ class _PaymentDialogState extends State<PaymentDialog> {
           child: const Text('Batal'),
         ),
         ElevatedButton(
-          onPressed: () {
-            if (!isTempo && metodeBayar == 'Cash' && bayar < widget.total) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Uang kurang'),
-                ),
-              );
-              return;
-            }
+          
+        onPressed: () {
+          final isPaidMethod = !isTempo;
 
-            if (isTempo && namaPelangganController.text.trim().isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Nama pelanggan wajib diisi untuk tempo'),
-                ),
-              );
-              return;
-            }
-
-            Navigator.pop(
-              context,
-              PaymentResult(
-                total: widget.total,
-                bayar: bayar,
-                kembalian: isTempo ? 0 : kembalian,
-                metodeBayar: metodeBayar,
-                namaPelanggan: namaPelangganController.text.trim(),
-                catatan: catatanController.text.trim(),
+          if (isPaidMethod && bayar < widget.total) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Pembayaran belum cukup'),
               ),
             );
-          },
+            return;
+          }
+
+          if (isTempo && namaPelangganController.text.trim().isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Nama pelanggan wajib diisi untuk tempo'),
+              ),
+            );
+            return;
+          }
+
+          Navigator.pop(
+            context,
+            PaymentResult(
+              total: widget.total,
+              bayar: bayar,
+              kembalian: isTempo ? 0 : kembalian,
+              metodeBayar: metodeBayar,
+              namaPelanggan: namaPelangganController.text.trim(),
+              catatan: catatanController.text.trim(),
+            ),
+          );
+        },
           child: const Text('Simpan'),
         ),
       ],
