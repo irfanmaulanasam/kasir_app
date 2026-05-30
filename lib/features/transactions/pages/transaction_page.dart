@@ -165,6 +165,11 @@ class _TransaksiPageState extends State<TransaksiPage> {
 
     final settingsData = await SettingsRepo().getSettings();
 
+    final isTempo = metodeBayar == 'Tempo';
+    final sisaHutang = isTempo? total - bayar : 0;
+    final sisaHutangAman = sisaHutang < 0 ? 0: sisaHutang;
+    final statusBayar = sisaHutangAman > 0 ? 'BELUM_LUNAS': 'LUNAS';
+
     try {
       final transaksiRepo = TransaksiRepo();
 
@@ -200,8 +205,10 @@ class _TransaksiPageState extends State<TransaksiPage> {
               'id': transaksiId,
               'total': total,
               'bayar': bayar,
-              'kembalian': kembalian,
+              'kembalian': isTempo ? 0 : kembalian,
               'metode_bayar': metodeBayar,
+              'status_bayar': statusBayar,
+              'sisa_hutang': sisaHutangAman,
               'tanggal': DateTime.now().millisecondsSinceEpoch,
             },
             items: receiptItems,

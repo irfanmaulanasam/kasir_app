@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kasir_app/features/inventory/pages/inventory_page.dart';
+import 'package:kasir_app/features/piutang/pages/piutang_page.dart';
 import '../summary/summary_page.dart';
 import '../transactions/pages/transaction_page.dart';
 import '../product/product_page.dart';
@@ -100,6 +101,13 @@ class AppDrawer extends StatelessWidget {
             icon: Icons.receipt_long,
             page: const SummaryPage(),
           ),
+
+          buildMenu(
+            context: context,
+            title: 'piutang',
+            icon: Icons.credit_score,
+            page: const PiutangPage()
+            ),
 
           buildMenu(
             context: context,

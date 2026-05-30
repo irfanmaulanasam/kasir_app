@@ -10,6 +10,7 @@ class ReceiptPreviewPage extends StatelessWidget {
   final Map<String, dynamic> transaksi;
   final List items;
   final Map<String, dynamic>? settings;
+  
 
   const ReceiptPreviewPage({
     super.key,

@@ -12,6 +12,11 @@ class ReceiptPaymentSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final metodeBayar = transaksi['metode_bayar']?.toString() ?? '-';
+    final statusBayar = transaksi['status_bayar']?.toString() ?? 'LUNAS';
+    final sisaHutang = transaksi['sisa_hutang'] as int? ?? 0;
+    final isTempo = metodeBayar == 'Tempo';
+
     return Column(
       children: [
         Row(
@@ -25,7 +30,7 @@ class ReceiptPaymentSummary extends StatelessWidget {
               ),
             ),
             Text(
-              rupiah(transaksi['total'] ?? 0),
+              rupiah(transaksi['total'] as int? ?? 0),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -36,17 +41,26 @@ class ReceiptPaymentSummary extends StatelessWidget {
         const SizedBox(height: 20),
         _SummaryRow(
           label: 'Metode',
-          value: transaksi['metode_bayar']?.toString() ?? '-',
+          value: metodeBayar,
+        ),
+        const SizedBox(height: 8),
+        _SummaryRow(
+          label: 'Status',
+          value: statusBayar,
         ),
         const SizedBox(height: 8),
         _SummaryRow(
           label: 'Bayar',
-          value: rupiah(transaksi['bayar'] ?? 0),
+          value: rupiah(transaksi['bayar'] as int? ?? 0),
         ),
         const SizedBox(height: 8),
         _SummaryRow(
-          label: 'Kembalian',
-          value: rupiah(transaksi['kembalian'] ?? 0),
+          label: isTempo ? 'Sisa Hutang' : 'Kembalian',
+          value: rupiah(
+            isTempo
+                ? sisaHutang
+                : transaksi['kembalian'] as int? ?? 0,
+          ),
         ),
       ],
     );

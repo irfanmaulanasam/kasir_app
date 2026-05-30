@@ -14,34 +14,39 @@ class ReceiptHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          settings?['nama_toko'] ?? 'TOKO',
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            settings?['nama_toko'] ?? 'TOKO',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          settings?['alamat'] ?? '',
-          textAlign: TextAlign.center,
-        ),
-        Text(
-          settings?['telepon'] ?? '',
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          DateFormatter.receiptDate(timestamp),
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.grey,
+          const SizedBox(height: 8),
+          Text(
+            settings?['alamat'] ?? '',
+            textAlign: TextAlign.center,
           ),
-        ),
-      ],
+          Text(
+            settings?['telepon'] ?? '',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            DateFormatter.receiptDate(timestamp),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
