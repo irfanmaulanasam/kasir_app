@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kasir_app/features/inventory/pages/inventory_page.dart';
-
+import '../summary/summary_page.dart';
 import '../transactions/pages/transaction_page.dart';
 import '../product/product_page.dart';
-import '../transactions/pages/tansaction_history_page.dart';
 import '../settings/settings_page.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -99,7 +98,7 @@ class AppDrawer extends StatelessWidget {
             context: context,
             title: 'Riwayat',
             icon: Icons.receipt_long,
-            page: const RiwayatPage(),
+            page: const SummaryPage(),
           ),
 
           buildMenu(
