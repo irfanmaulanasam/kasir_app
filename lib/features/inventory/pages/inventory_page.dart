@@ -377,12 +377,6 @@ class _InventoryPageState extends State<InventoryPage> {
                             ),
                             const SizedBox(width: 8),
                             IconButton(
-                              onPressed: () => showEditMinimumStockDialog(produk),
-                              icon: const Icon(Icons.edit_note),
-                              tooltip: 'Edit Minimum Stok',
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
                               onPressed: () => showLog(produk),
                               icon: const Icon(Icons.history),
                               tooltip: 'Histori',
