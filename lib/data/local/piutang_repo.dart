@@ -124,4 +124,34 @@ class PiutangRepo {
       ORDER BY c.nama ASC
     ''');
   }
+  Future<Map<String, dynamic>> getCustomerDebtDetail(int customerId) async {
+    final db = await _dbHelper.db;
+
+    final result = await db.rawQuery('''
+      SELECT
+        c.id,
+        c.nama,
+        c.no_hp,
+        COALESCE(SUM(p.total), 0) as total_hutang,
+        COALESCE(SUM(p.dibayar), 0) as total_bayar,
+        COALESCE(SUM(p.sisa), 0) as sisa_hutang
+      FROM customers c
+      LEFT JOIN piutang p ON p.customer_id = c.id
+      WHERE c.id = ?
+      GROUP BY c.id
+    ''', [customerId]);
+
+    return result.first;
+  }
+
+  Future<List<Map<String, dynamic>>> getCustomerPiutangList(int customerId) async {
+    final db = await _dbHelper.db;
+
+    return db.query(
+      'piutang',
+      where: 'customer_id = ?',
+      whereArgs: [customerId],
+      orderBy: 'tanggal DESC',
+    );
+  }
 }

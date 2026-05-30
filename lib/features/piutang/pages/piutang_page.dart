@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kasir_app/core/widgets/currency_text_field.dart';
-
 import '../../../data/local/piutang_repo.dart';
 import '../../widgets/app_drawer.dart';
-import '../widgets/piutang_card.dart';
+import '../widgets/customer_debt_card.dart';
+import '../pages/cutomer_detail_page.dart';
 
 class PiutangPage extends StatefulWidget {
   const PiutangPage({super.key});
@@ -14,7 +14,12 @@ class PiutangPage extends StatefulWidget {
 
 class _PiutangPageState extends State<PiutangPage> {
   final PiutangRepo repo = PiutangRepo();
-
+  String formatRupiah(int value) {
+    return 'Rp ${value.toString().replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+      (match) => '${match[1]}.',
+    )}';
+  }
   List<Map<String, dynamic>> data = [];
   bool isLoading = true;
 
@@ -25,7 +30,7 @@ class _PiutangPageState extends State<PiutangPage> {
   }
 
   Future<void> loadData() async {
-    final result = await repo.getPiutangWithCustomer();
+    final result = await repo.getCustomerDebtSummary();
 
     if (!mounted) return;
 
@@ -135,10 +140,18 @@ class _PiutangPageState extends State<PiutangPage> {
                 : ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (context, index) {
-                      return PiutangCard(
-                        item: data[index],
-                        onBayar: () {
-                          showBayarDialog(data[index]);
+                      return CustomerDebtCard(
+                        customer: data[index],
+                        rupiah: formatRupiah,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CustomerDetailPage(
+                                customerId: data[index]['id'] as int,
+                              ),
+                            ),
+                          );
                         },
                       );
                     },
