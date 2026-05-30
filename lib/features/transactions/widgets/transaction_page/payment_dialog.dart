@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/widgets/currency_text_field.dart';
 
 class PaymentResult {
@@ -7,12 +6,16 @@ class PaymentResult {
   final int bayar;
   final int kembalian;
   final String metodeBayar;
+  final String? namaPelanggan;
+  final String? catatan;
 
   const PaymentResult({
     required this.total,
     required this.bayar,
     required this.kembalian,
     required this.metodeBayar,
+    this.namaPelanggan,
+    this.catatan,
   });
 }
 
@@ -32,11 +35,16 @@ class PaymentDialog extends StatefulWidget {
 
 class _PaymentDialogState extends State<PaymentDialog> {
   final bayarController = TextEditingController();
+  final namaPelangganController = TextEditingController();
+  final catatanController = TextEditingController();
+
   String metodeBayar = 'Cash';
 
   @override
   void dispose() {
     bayarController.dispose();
+    namaPelangganController.dispose();
+    catatanController.dispose();
     super.dispose();
   }
 
@@ -51,68 +59,101 @@ class _PaymentDialogState extends State<PaymentDialog> {
     return bayar - widget.total;
   }
 
+  bool get isTempo {
+    return metodeBayar == 'Tempo';
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Pembayaran'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Total'),
-              Text(
-                widget.formatRupiah(widget.total),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            value: metodeBayar,
-            items: ['Cash', 'QRIS', 'Transfer']
-                .map(
-                  (e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Total'),
+                Text(
+                  widget.formatRupiah(widget.total),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
                   ),
-                )
-                .toList(),
-            onChanged: (value) {
-              if (value == null) return;
-
-              setState(() {
-                metodeBayar = value;
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: 'Metode Bayar',
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 16),
-          CurrencyTextField(
-            controller: bayarController,
-            label: 'Uang Diterima',
-            onChanged: (_) {
-              setState(() {});
-            },
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Kembalian'),
-              Text(
-                widget.formatRupiah(
-                  kembalian < 0 ? 0 : kembalian,
+            const SizedBox(height: 16),
+
+            DropdownButtonFormField<String>(
+              value: metodeBayar,
+              items: ['Cash', 'QRIS', 'Transfer', 'Tempo']
+                  .map(
+                    (e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(e),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                if (value == null) return;
+
+                setState(() {
+                  metodeBayar = value;
+                });
+              },
+              decoration: const InputDecoration(
+                labelText: 'Metode Bayar',
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            CurrencyTextField(
+              controller: bayarController,
+              label: isTempo ? 'Dibayar Sekarang' : 'Uang Diterima',
+              onChanged: (_) {
+                setState(() {});
+              },
+            ),
+
+            if (isTempo) ...[
+              const SizedBox(height: 16),
+              TextField(
+                controller: namaPelangganController,
+                decoration: const InputDecoration(
+                  labelText: 'Nama Pelanggan',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: catatanController,
+                decoration: const InputDecoration(
+                  labelText: 'Catatan',
+                  border: OutlineInputBorder(),
                 ),
               ),
             ],
-          ),
-        ],
+
+            const SizedBox(height: 16),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(isTempo ? 'Sisa Hutang' : 'Kembalian'),
+                Text(
+                  widget.formatRupiah(
+                    isTempo
+                        ? (widget.total - bayar < 0 ? 0 : widget.total - bayar)
+                        : (kembalian < 0 ? 0 : kembalian),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -123,10 +164,19 @@ class _PaymentDialogState extends State<PaymentDialog> {
         ),
         ElevatedButton(
           onPressed: () {
-            if (metodeBayar == 'Cash' && bayar < widget.total) {
+            if (!isTempo && metodeBayar == 'Cash' && bayar < widget.total) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Uang kurang'),
+                ),
+              );
+              return;
+            }
+
+            if (isTempo && namaPelangganController.text.trim().isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Nama pelanggan wajib diisi untuk tempo'),
                 ),
               );
               return;
@@ -137,8 +187,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
               PaymentResult(
                 total: widget.total,
                 bayar: bayar,
-                kembalian: kembalian,
+                kembalian: isTempo ? 0 : kembalian,
                 metodeBayar: metodeBayar,
+                namaPelanggan: namaPelangganController.text.trim(),
+                catatan: catatanController.text.trim(),
               ),
             );
           },

@@ -15,7 +15,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE produk(
@@ -64,6 +64,19 @@ class DBHelper {
             alamat TEXT,
             telepon TEXT,
             footer TEXT
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS piutang(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            transaksi_id INTEGER,
+            nama_pelanggan TEXT,
+            total INTEGER,
+            dibayar INTEGER DEFAULT 0,
+            sisa INTEGER,
+            status TEXT,
+            catatan TEXT,
+            tanggal INTEGER
           )
         ''');
       },

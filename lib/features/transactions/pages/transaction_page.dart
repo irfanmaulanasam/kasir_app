@@ -3,6 +3,7 @@ import 'package:kasir_app/features/transactions/models/cart_item.dart';
 import '../../../data/local/produk_repo.dart';
 import '../../../data/local/transaksi_repo.dart';
 import '../../../data/local/settings_repo.dart';
+import '../../../data/local/piutang_repo.dart';
 import '../services/transaction_service.dart';
 import '../widgets/transaction_page/cart_section.dart';
 import '../widgets/transaction_page/checkout_bar.dart';
@@ -142,31 +143,31 @@ class _TransaksiPageState extends State<TransaksiPage> {
 
     if (result == null) return;
 
-    await bayarDanSimpan(
-      result.total,
-      result.bayar,
-      result.kembalian,
-      result.metodeBayar,
-    );
+   await bayarDanSimpan(
+    total: result.total,
+    bayar: result.bayar,
+    kembalian: result.kembalian,
+    metodeBayar: result.metodeBayar,
+    namaPelanggan: result.namaPelanggan,
+    catatan: result.catatan,
+);
   }
 
-  Future<void> bayarDanSimpan(
-    int total,
-    int bayar,
-    int kembalian,
-    String metodeBayar,
-  ) async {
+  Future<void> bayarDanSimpan({
+    required int total,
+    required int bayar,
+    required int kembalian,
+    required String metodeBayar,
+    String? namaPelanggan,
+    String? catatan,
+  }) async {
     if (cart.isEmpty) return;
 
-    final total = getTotal();
-
-    final settingsData =
-        await SettingsRepo().getSettings();
+    final settingsData = await SettingsRepo().getSettings();
 
     try {
       final transaksiRepo = TransaksiRepo();
 
-      // simpan snapshot item sebelum cart dikosongkan
       final receiptItems = cart.values
           .map((item) => item.toMap())
           .toList();
@@ -174,14 +175,23 @@ class _TransaksiPageState extends State<TransaksiPage> {
       final transaksiId = await transaksiRepo.simpanTransaksi(
         receiptItems,
       );
-      // CLEAR cart dulu
+
+      if (metodeBayar == 'Tempo') {
+        await PiutangRepo().insert(
+          transaksiId: transaksiId,
+          namaPelanggan: namaPelanggan ?? 'Pelanggan',
+          total: total,
+          dibayar: bayar,
+          catatan: catatan ?? '',
+        );
+      }
+
+      if (!mounted) return;
+
       setState(() {
         cart.clear();
       });
 
-      if (!mounted) return;
-
-      // baru pindah page
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -194,27 +204,22 @@ class _TransaksiPageState extends State<TransaksiPage> {
               'metode_bayar': metodeBayar,
               'tanggal': DateTime.now().millisecondsSinceEpoch,
             },
-
             items: receiptItems,
-
             settings: settingsData,
           ),
         ),
       );
     } catch (e) {
-
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Gagal simpan transaksi: $e',
-          ),
+          content: Text('Gagal simpan transaksi: $e'),
         ),
       );
     }
-  }
-  
+  } 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
