@@ -105,7 +105,7 @@ class AppDrawer extends StatelessWidget {
           buildMenu(
             context: context,
             title: 'piutang',
-            icon: Icons.credit_score,
+            icon: Icons.people_alt_outlined,
             page: const PiutangPage()
             ),
 

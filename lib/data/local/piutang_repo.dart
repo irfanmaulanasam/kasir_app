@@ -1,10 +1,12 @@
 import '../../core/db/db_helper.dart';
+// import '../models/customer.dart';
 
 class PiutangRepo {
   final DBHelper _dbHelper = DBHelper();
 
   Future<int> insert({
     required int transaksiId,
+    required int customerId,
     required String namaPelanggan,
     required int total,
     required int dibayar,
@@ -15,6 +17,7 @@ class PiutangRepo {
 
     return db.insert('piutang', {
       'transaksi_id': transaksiId,
+      'customer_id': customerId,
       'nama_pelanggan': namaPelanggan,
       'total': total,
       'dibayar': dibayar,
@@ -81,5 +84,44 @@ class PiutangRepo {
         whereArgs: [id],
       );
     });
+  }
+  Future<List<Map<String, dynamic>>> getPiutangWithCustomer() async {
+    final db = await _dbHelper.db;
+
+    return db.rawQuery('''
+      SELECT
+        p.id,
+        p.customer_id,
+        p.transaksi_id,
+        c.nama AS nama_pelanggan,
+        c.no_hp,
+        p.total,
+        p.dibayar,
+        p.sisa,
+        p.status,
+        p.catatan,
+        p.tanggal
+      FROM piutang p
+      LEFT JOIN customers c ON c.id = p.customer_id
+      ORDER BY p.tanggal DESC
+    ''');
+  }
+  Future<List<Map<String, dynamic>>> getCustomerDebtSummary() async {
+    final db = await _dbHelper.db;
+
+    return db.rawQuery('''
+      SELECT
+        c.id AS customer_id,
+        c.nama AS nama_pelanggan,
+        c.no_hp,
+        COUNT(p.id) AS jumlah_bon,
+        COALESCE(SUM(p.total), 0) AS total,
+        COALESCE(SUM(p.dibayar), 0) AS dibayar,
+        COALESCE(SUM(p.sisa), 0) AS sisa
+      FROM customers c
+      JOIN piutang p ON p.customer_id = c.id
+      GROUP BY c.id
+      ORDER BY c.nama ASC
+    ''');
   }
 }

@@ -4,6 +4,8 @@ import '../../../data/local/produk_repo.dart';
 import '../../../data/local/transaksi_repo.dart';
 import '../../../data/local/settings_repo.dart';
 import '../../../data/local/piutang_repo.dart';
+import '../../../data/local/customer_repo.dart';
+import '../../../data/models/customer.dart';
 import '../services/transaction_service.dart';
 import '../widgets/transaction_page/cart_section.dart';
 import '../widgets/transaction_page/checkout_bar.dart';
@@ -182,9 +184,26 @@ class _TransaksiPageState extends State<TransaksiPage> {
       );
 
       if (metodeBayar == 'Tempo') {
+        final customerRepo = CustomerRepo();
+
+        final namaCustomer = (namaPelanggan == null || namaPelanggan.trim().isEmpty)
+            ? 'Pelanggan'
+            : namaPelanggan.trim();
+
+        final existingCustomer = await customerRepo.findByName(namaCustomer);
+
+        final customerId = existingCustomer?.id ??
+            await customerRepo.insert(
+              Customer(
+                nama: namaCustomer,
+                noHp: '',
+              ),
+            );
+
         await PiutangRepo().insert(
+          customerId: customerId,
           transaksiId: transaksiId,
-          namaPelanggan: namaPelanggan ?? 'Pelanggan',
+          namaPelanggan: namaCustomer,
           total: total,
           dibayar: bayar,
           catatan: catatan ?? '',

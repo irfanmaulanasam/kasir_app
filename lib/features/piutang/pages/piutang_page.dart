@@ -25,7 +25,7 @@ class _PiutangPageState extends State<PiutangPage> {
   }
 
   Future<void> loadData() async {
-    final result = await repo.getAll();
+    final result = await repo.getPiutangWithCustomer();
 
     if (!mounted) return;
 

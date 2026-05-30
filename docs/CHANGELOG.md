@@ -102,3 +102,20 @@
 * Persiapan flavor BASIC / ADVANCED / PRO
 * Persiapan inventory scaling
 * Persiapan custom unit conversion
+
+## [0.1.0-alpha] - 2026-05-31
+
+### Added
+- Customer model
+- Customer repository
+- Customer database table
+- Tempo payment workflow
+- Piutang page
+- Debt payment dialog
+- Receipt payment status
+
+### Fixed
+- QRIS and Transfer now require full payment
+- Prevent overpayment on debt settlement
+- Currency formatting for debt payments
+- Receipt header alignment
