@@ -115,7 +115,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
             const SizedBox(height: 16),
 
-            if(isAutoPaid) ...[
+            if(!isAutoPaid) ...[
               CurrencyTextField(
                 controller: bayarController,
                 label: isTempo ? 'Dibayar Sekarang' : 'Uang Diterima',
