@@ -191,6 +191,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
             );
             return;
           }
+          if (isTempo && bayar > widget.total) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Dibayar sekarang tidak boleh melebihi total belanja'),
+              ),
+            );
+            return;
+          }
 
           Navigator.pop(
             context,
