@@ -214,6 +214,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
 
       setState(() {
         cart.clear();
+        produkList = repo.getAll();
       });
 
       Navigator.push(
