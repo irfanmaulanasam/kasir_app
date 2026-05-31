@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/widgets/app_dialog.dart';
 import '../../../../core/widgets/currency_text_field.dart';
 
 class PaymentResult {
@@ -171,31 +172,29 @@ class _PaymentDialogState extends State<PaymentDialog> {
         ),
         ElevatedButton(
           
-        onPressed: () {
+        onPressed: () async {
           final isPaidMethod = !isTempo;
 
           if (isPaidMethod && bayar < widget.total) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Pembayaran belum cukup'),
-              ),
+            await AppDialog.error(
+              context,
+              message: 'Pembayaran belum cukup. Gunakan Tempo jika belum lunas.',
+            );
+            return;
+          }
+
+          if (isTempo && bayar > widget.total) {
+            await AppDialog.error(
+              context,
+              message: 'Pembayaran tempo tidak boleh melebihi total belanja.',
             );
             return;
           }
 
           if (isTempo && namaPelangganController.text.trim().isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Nama pelanggan wajib diisi untuk tempo'),
-              ),
-            );
-            return;
-          }
-          if (isTempo && bayar > widget.total) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Dibayar sekarang tidak boleh melebihi total belanja'),
-              ),
+            await AppDialog.error(
+              context,
+              message: 'Nama pelanggan wajib diisi untuk transaksi tempo.',
             );
             return;
           }
