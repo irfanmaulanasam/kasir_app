@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../core/db/db_helper.dart';
 // import '../models/customer.dart';
 
@@ -108,22 +110,43 @@ class PiutangRepo {
   }
   Future<List<Map<String, dynamic>>> getCustomerDebtSummary() async {
     final db = await _dbHelper.db;
+    return db.rawQuery('''
+        SELECT
+        COALESCE(c.id, p.customer_id) AS customer_id,
+        COALESCE(c.nama, p.nama_pelanggan, 'Pelanggan') AS nama,
+        COALESCE(c.no_hp, '') AS no_hp,
+        COUNT(p.id) AS jumlah_bon,
+        COALESCE(SUM(p.total), 0) AS total_hutang,
+        COALESCE(SUM(p.dibayar), 0) AS total_bayar,
+        COALESCE(SUM(p.sisa), 0) AS sisa_hutang
+      FROM piutang p
+      LEFT JOIN customers c ON c.id = p.customer_id
+      GROUP BY COALESCE(c.id, p.customer_id, p.nama_pelanggan)
+      HAVING sisa_hutang > 0
+      ORDER BY nama ASC
+    ''');
+  }
+
+  Future<List<Map<String, dynamic>>> getCustomerSummary() async {
+    final db = await _dbHelper.db;
 
     return db.rawQuery('''
       SELECT
         c.id AS customer_id,
-        c.nama AS nama_pelanggan,
-        c.no_hp,
+        c.nama AS nama,
+        c.no_hp AS no_hp,
         COUNT(p.id) AS jumlah_bon,
-        COALESCE(SUM(p.total), 0) AS total,
-        COALESCE(SUM(p.dibayar), 0) AS dibayar,
-        COALESCE(SUM(p.sisa), 0) AS sisa
-      FROM customers c
-      JOIN piutang p ON p.customer_id = c.id
+        COALESCE(SUM(p.total), 0) AS total_hutang,
+        COALESCE(SUM(p.dibayar), 0) AS total_bayar,
+        COALESCE(SUM(p.sisa), 0) AS sisa_hutang
+      FROM piutang p
+      JOIN customers c ON c.id = p.customer_id
       GROUP BY c.id
+      HAVING sisa_hutang > 0
       ORDER BY c.nama ASC
     ''');
   }
+
   Future<Map<String, dynamic>> getCustomerDebtDetail(int customerId) async {
     final db = await _dbHelper.db;
 
@@ -154,4 +177,57 @@ class PiutangRepo {
       orderBy: 'tanggal DESC',
     );
   }
+  Future<void> debugPiutang() async {
+    final db = await _dbHelper.db;
+
+    final rows = await db.rawQuery('SELECT * FROM piutang');
+    debugPrint('PIUTANG ROWS: $rows');
+
+    final customers = await db.rawQuery('SELECT * FROM customers');
+    debugPrint('CUSTOMER ROWS: $customers');
+  }
+
+  Future<void> bayarCustomerPiutang({
+  required int customerId,
+  required int nominal,
+}) async {
+  final db = await _dbHelper.db;
+
+  await db.transaction((txn) async {
+    int sisaBayar = nominal;
+
+    final rows = await txn.query(
+      'piutang',
+      where: 'customer_id = ? AND status = ?',
+      whereArgs: [customerId, 'BELUM_LUNAS'],
+      orderBy: 'tanggal ASC',
+    );
+
+    for (final row in rows) {
+      if (sisaBayar <= 0) break;
+
+      final id = row['id'] as int;
+      final dibayarLama = row['dibayar'] as int? ?? 0;
+      final sisaLama = row['sisa'] as int? ?? 0;
+
+      final bayarUntukBon = sisaBayar >= sisaLama ? sisaLama : sisaBayar;
+
+      final dibayarBaru = dibayarLama + bayarUntukBon;
+      final sisaBaru = sisaLama - bayarUntukBon;
+
+      await txn.update(
+        'piutang',
+        {
+          'dibayar': dibayarBaru,
+          'sisa': sisaBaru,
+          'status': sisaBaru <= 0 ? 'LUNAS' : 'BELUM_LUNAS',
+        },
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      sisaBayar -= bayarUntukBon;
+    }
+  });
+}
 }

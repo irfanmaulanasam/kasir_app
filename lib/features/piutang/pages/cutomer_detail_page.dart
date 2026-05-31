@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/formatters/currency_formatter.dart';
+import '../../../core/widgets/currency_text_field.dart';
 import '../../../data/local/piutang_repo.dart';
 
 class CustomerDetailPage extends StatefulWidget {
@@ -27,6 +28,61 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
   void initState() {
     super.initState();
     loadData();
+  }
+
+  Future<void> showBayarCustomerDialog() async {
+    final controller = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Bayar Hutang'),
+          content: CurrencyTextField(
+            controller: controller,
+            label: 'Nominal Bayar',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final nominal = int.tryParse(
+                      controller.text.replaceAll('.', '').trim(),
+                    ) ??
+                    0;
+
+                final sisa = detail?['sisa_hutang'] as int? ?? 0;
+
+                if (nominal <= 0) {
+                  return;
+                }
+
+                if (nominal > sisa) {
+                  return;
+                }
+
+                await repo.bayarCustomerPiutang(
+                  customerId: widget.customerId,
+                  nominal: nominal,
+                );
+
+                if (!dialogContext.mounted) return;
+                Navigator.pop(dialogContext);
+
+                if (!mounted) return;
+                await loadData();
+              },
+              child: const Text('Simpan'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> loadData() async {
@@ -98,6 +154,19 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                       label: 'Sisa Hutang',
                       value: CurrencyFormatter.format(sisaHutang),
                       bold: true,
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: sisaHutang <= 0
+                            ? null
+                            : () {
+                                showBayarCustomerDialog();
+                              },
+                        icon: const Icon(Icons.payments_outlined),
+                        label: const Text('Bayar Hutang'),
+                      ),
                     ),
                   ],
                 ),

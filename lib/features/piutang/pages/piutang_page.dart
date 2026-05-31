@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kasir_app/core/widgets/currency_text_field.dart';
+import '../../../core/widgets/app_dialog.dart';
 import '../../../data/local/piutang_repo.dart';
 import '../../widgets/app_drawer.dart';
 import '../widgets/customer_debt_card.dart';
@@ -30,7 +31,7 @@ class _PiutangPageState extends State<PiutangPage> {
   }
 
   Future<void> loadData() async {
-    final result = await repo.getCustomerDebtSummary();
+    final result = await repo.getCustomerSummary();
 
     if (!mounted) return;
 
@@ -71,18 +72,16 @@ class _PiutangPageState extends State<PiutangPage> {
                 final sisa = item['sisa'] as int? ?? 0;
                 
                 if (nominal <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Nominal harus lebih dari 0'),
-                    ),
+                  await AppDialog.error(
+                    context,
+                    message: 'Nominal harus lebih dari 0',
                   );
                   return;
                 }
                 if (nominal > sisa) {
-                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                    const SnackBar(
-                      content: Text('Nominal bayar melebihi sisa hutang'),
-                    ),
+                  await AppDialog.error(
+                    context,
+                    message: 'Nominal bayar melebihi sisa hutang',
                   );
                   return;
                 }
@@ -99,11 +98,11 @@ class _PiutangPageState extends State<PiutangPage> {
                 await loadData();
 
                 if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Pembayaran piutang berhasil'),
-                  ),
+                await AppDialog.error(
+                  context,
+                  message: 'Pembayaran piutang berhasil',
                 );
+                return;
               },
               child: const Text('Simpan'),
             ),
@@ -144,11 +143,17 @@ class _PiutangPageState extends State<PiutangPage> {
                         customer: data[index],
                         rupiah: formatRupiah,
                         onTap: () {
+                         final customerId = data[index]['customer_id'];
+
+                          if (customerId == null) {
+                            return;
+                          }
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => CustomerDetailPage(
-                                customerId: data[index]['id'] as int,
+                                customerId: customerId as int,
                               ),
                             ),
                           );
