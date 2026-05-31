@@ -26,6 +26,7 @@ class _ProdukPageState extends State<ProdukPage> {
 
   double stockDasar = 0;
   String satuanDasar = 'pcs';
+  int stockInputKey = 0;
 
   @override
   void initState() {
@@ -94,6 +95,7 @@ class _ProdukPageState extends State<ProdukPage> {
     setState(() {
       stockDasar = 0;
       satuanDasar = 'pcs';
+      stockInputKey++;
       produkList = repo.getAll();
     });
 
@@ -140,6 +142,7 @@ class _ProdukPageState extends State<ProdukPage> {
           ),
           const SizedBox(height: 10),
           StockInputField(
+            key: ValueKey(stockInputKey),
             onChanged: (result) {
               stockDasar = result.baseStock;
               satuanDasar = result.baseUnit;
