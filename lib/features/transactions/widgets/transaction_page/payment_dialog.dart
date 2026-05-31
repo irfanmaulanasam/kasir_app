@@ -39,6 +39,9 @@ class _PaymentDialogState extends State<PaymentDialog> {
   final catatanController = TextEditingController();
 
   String metodeBayar = 'Cash';
+  bool get isAutoPaid {
+    return metodeBayar == 'QRIS' || metodeBayar == 'Transfer';
+  }
 
   @override
   void dispose() {
@@ -49,6 +52,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   }
 
   int get bayar {
+    if(isAutoPaid) return widget.total;
     return int.tryParse(
           bayarController.text.replaceAll('.', '').trim(),
         ) ??
@@ -111,13 +115,15 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
             const SizedBox(height: 16),
 
-            CurrencyTextField(
-              controller: bayarController,
-              label: isTempo ? 'Dibayar Sekarang' : 'Uang Diterima',
-              onChanged: (_) {
-                setState(() {});
-              },
-            ),
+            if(isAutoPaid) ...[
+              CurrencyTextField(
+                controller: bayarController,
+                label: isTempo ? 'Dibayar Sekarang' : 'Uang Diterima',
+                onChanged: (_) {
+                  setState(() {});
+                },
+              ),
+            ],
 
             if (isTempo) ...[
               const SizedBox(height: 16),
