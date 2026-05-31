@@ -69,7 +69,7 @@ class DBHelper {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS piutang(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            customer_id INTEGER
+            customer_id INTEGER,
             transaksi_id INTEGER,
             nama_pelanggan TEXT,
             total INTEGER,
