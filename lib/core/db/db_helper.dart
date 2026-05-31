@@ -15,7 +15,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE produk(
@@ -89,6 +89,15 @@ class DBHelper {
             created_at INTEGER
           )
         ''');
+        await db.execute('''
+          CREATE TABLE pengeluaran(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            kategori TEXT,
+            nominal INTEGER,
+            catatan TEXT,
+            tanggal INTEGER
+          )
+        ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -149,6 +158,17 @@ class DBHelper {
           await db.execute(
             'ALTER TABLE piutang ADD COLUMN customer_id INTEGER',
           );
+        }
+        if (oldVersion < 8) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS pengeluaran(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              kategori TEXT,
+              nominal INTEGER,
+              catatan TEXT,
+              tanggal INTEGER
+            )
+          ''');
         }
       },
     );

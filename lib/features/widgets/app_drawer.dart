@@ -5,7 +5,7 @@ import '../summary/summary_page.dart';
 import '../transactions/pages/transaction_page.dart';
 import '../product/product_page.dart';
 import '../settings/settings_page.dart';
-
+import '../pengeluaran/pages/pengeluaran_page.dart';
 class AppDrawer extends StatelessWidget {
 
   final String currentPage;
@@ -90,9 +90,16 @@ class AppDrawer extends StatelessWidget {
           
           buildMenu(
             context: context,
-            title: 'Inventory',
+            title: 'Stok',
             icon: Icons.inventory_2,
             page: const InventoryPage(),
+          ),
+
+          buildMenu(
+            context: context,
+            title: 'pengeluaran',
+            icon: Icons.money_off_csred_outlined,
+            page: const PengeluaranPage()
           ),
 
           buildMenu(
