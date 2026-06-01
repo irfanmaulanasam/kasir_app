@@ -236,11 +236,20 @@ class _TransaksiPageState extends State<TransaksiPage> {
           ),
         ),
       );
-    } catch (e) {
+    } catch (e, stackTrace) { // <--- Tambahkan stackTrace di sini
+      // Cetak error ke console VS Code / Android Studio dengan jelas
+      debugPrint('=== ERROR TRANSAKSI TEMPO ===');
+      debugPrint('Pesan Error: $e');
+      debugPrint('Stack Trace:\n$stackTrace');
+      debugPrint('==============================');
+
       if (!mounted) return;
 
+      // SnackBar tetap muncul untuk memberi tahu user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          backgroundColor: Colors.red, // Beri warna merah agar mencolok
+          duration: const Duration(seconds: 5), // Lebih lama agar sempat terbaca
           content: Text('Gagal simpan transaksi: $e'),
         ),
       );
