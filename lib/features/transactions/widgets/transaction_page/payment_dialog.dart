@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/app_dialog.dart';
 import '../../../../core/widgets/currency_text_field.dart';
-
+import '../../../../data/local/customer_repo.dart';
+import '../../../../data/models/customer.dart';
 class PaymentResult {
   final int total;
   final int bayar;
@@ -38,10 +39,28 @@ class _PaymentDialogState extends State<PaymentDialog> {
   final bayarController = TextEditingController();
   final namaPelangganController = TextEditingController();
   final catatanController = TextEditingController();
+  final customerRepo = CustomerRepo();
+  List<Customer> customers = [];
 
   String metodeBayar = 'Cash';
   bool get isAutoPaid {
     return metodeBayar == 'QRIS' || metodeBayar == 'Transfer';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadCustomers();
+  }
+
+  Future<void> loadCustomers() async {
+    final result = await customerRepo.getAll();
+
+    if (!mounted) return;
+
+    setState(() {
+      customers = result;
+    });
   }
 
   @override
@@ -128,12 +147,43 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
             if (isTempo) ...[
               const SizedBox(height: 16),
-              TextField(
-                controller: namaPelangganController,
-                decoration: const InputDecoration(
-                  labelText: 'Nama Pelanggan',
-                  border: OutlineInputBorder(),
-                ),
+              Autocomplete<Customer>(
+                displayStringForOption: (customer) => customer.nama,
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  final query = textEditingValue.text.toLowerCase();
+
+                  if (query.isEmpty) {
+                    return const Iterable<Customer>.empty();
+                  }
+
+                  return customers.where((customer) {
+                    return customer.nama.toLowerCase().contains(query);
+                  });
+                },
+                onSelected: (Customer customer) {
+                  namaPelangganController.text = customer.nama;
+                },
+                fieldViewBuilder: (
+                  context,
+                  textEditingController,
+                  focusNode,
+                  onFieldSubmitted,
+                ) {
+                  textEditingController.text = namaPelangganController.text;
+
+                  textEditingController.addListener(() {
+                    namaPelangganController.text = textEditingController.text;
+                  });
+
+                  return TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    decoration: const InputDecoration(
+                      labelText: 'Nama Pelanggan',
+                      border: OutlineInputBorder(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 12),
               TextField(
