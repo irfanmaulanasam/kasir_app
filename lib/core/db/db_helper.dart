@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 
 class DBHelper {
   static Database? _db;
-  static const int _databaseVersion = 9;
+  static const int _databaseVersion = 1; // Dimulai dari version 1
 
   Future<Database> get db async {
     if (_db != null) return _db!;
@@ -18,7 +18,6 @@ class DBHelper {
       path,
       version: _databaseVersion,
       onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -27,7 +26,7 @@ class DBHelper {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('PRAGMA foreign_keys = ON');
-    
+
     // Create all tables
     await db.execute('''
       CREATE TABLE produk(
@@ -118,7 +117,7 @@ class DBHelper {
 
     await db.execute('''
       CREATE TABLE settings(
-        id INTEGER PRIMARY KEY CHECK(id = 1),
+        id PRIMARY KEY CHECK(id = 1),
         nama_toko TEXT,
         alamat TEXT,
         telepon TEXT,
@@ -128,11 +127,11 @@ class DBHelper {
 
     // Create indexes for performance
     await _createIndexes(db);
-    
+
     // Insert default settings
     await db.insert('settings', {
       'id': 1,
-      'nama_toko': 'Toko Kasir',
+      'nama_toko': '',
       'alamat': '',
       'telepon': '',
       'footer': 'Terima kasih telah berbelanja',
@@ -152,98 +151,10 @@ class DBHelper {
     await db.execute('CREATE INDEX idx_stok_log_produk ON stok_log(produk_id)');
     await db.execute('CREATE INDEX idx_pengeluaran_tanggal ON pengeluaran(tanggal)');
     await db.execute('CREATE INDEX idx_customers_nama ON customers(nama)');
+    await db.execute('CREATE INDEX idx_transaksi_nomor ON transaksi(nomor_transaksi)');
+    await db.execute('CREATE INDEX idx_piutang_jatuh_tempo ON piutang(jatuh_tempo)');
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    await db.execute('PRAGMA foreign_keys = ON');
-    
-    if (oldVersion < 2) {
-      await db.execute('ALTER TABLE produk ADD COLUMN stok INTEGER DEFAULT 0');
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS stok_log(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          produk_id INTEGER,
-          qty INTEGER,
-          tipe TEXT,
-          catatan TEXT,
-          tanggal INTEGER
-        )
-      ''');
-    }
-
-    if (oldVersion < 3) {
-      await db.execute('ALTER TABLE produk ADD COLUMN harga_beli INTEGER DEFAULT 0');
-      await db.execute('ALTER TABLE produk ADD COLUMN minimum_stok INTEGER DEFAULT 0');
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS settings(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          nama_toko TEXT,
-          alamat TEXT,
-          telepon TEXT,
-          footer TEXT
-        )
-      ''');
-      
-      await db.insert('settings', {
-        'nama_toko': 'Toko Kasir',
-        'alamat': '',
-        'telepon': '',
-        'footer': 'Terima kasih telah berbelanja',
-      });
-    }
-
-    if (oldVersion < 4) {
-      await db.execute("ALTER TABLE produk ADD COLUMN satuan_dasar TEXT DEFAULT 'pcs'");
-    }
-
-    if (oldVersion < 5) {
-      await _createIndexes(db);
-    }
-
-    if (oldVersion < 6) {
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS customers(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          nama TEXT NOT NULL,
-          no_hp TEXT DEFAULT '',
-          catatan TEXT DEFAULT ''
-        )
-      ''');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_customers_nama ON customers(nama)');
-    }
-
-    if (oldVersion < 7) {
-      await db.execute('ALTER TABLE piutang ADD COLUMN customer_id INTEGER');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_piutang_customer ON piutang(customer_id)');
-    }
-
-    if (oldVersion < 8) {
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS pengeluaran(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          kategori TEXT,
-          nominal INTEGER,
-          catatan TEXT,
-          tanggal INTEGER
-        )
-      ''');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_pengeluaran_tanggal ON pengeluaran(tanggal)');
-    }
-
-    if (oldVersion < 9) {
-      // Add new columns for version 9
-      await db.execute('ALTER TABLE transaksi ADD COLUMN nomor_transaksi TEXT');
-      await db.execute('ALTER TABLE transaksi ADD COLUMN metode_bayar TEXT DEFAULT "Cash"');
-      await db.execute('ALTER TABLE transaksi ADD COLUMN customer_id INTEGER');
-      await db.execute('ALTER TABLE piutang ADD COLUMN jatuh_tempo INTEGER');
-      await db.execute('ALTER TABLE detail ADD COLUMN subtotal INTEGER');
-      
-      // Update existing subtotal values
-      await db.execute('UPDATE detail SET subtotal = qty * harga WHERE subtotal IS NULL');
-      
-      // Create new indexes
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_transaksi_nomor ON transaksi(nomor_transaksi)');
-      await db.execute('CREATE INDEX IF NOT EXISTS idx_piutang_jatuh_tempo ON piutang(jatuh_tempo)');
-    }
-  }
+  // _onUpgrade tidak diperlukan lagi karena version = 1
+  // Jika di masa depan butuh migration, bisa ditambahkan kembali
 }
