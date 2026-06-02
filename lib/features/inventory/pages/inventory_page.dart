@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/widgets/app_dialog.dart';
 import 'package:kasir_app/features/widgets/app_drawer.dart';
 import '../../../data/local/produk_repo.dart';
 
@@ -109,17 +110,13 @@ class _InventoryPageState extends State<InventoryPage> {
                     final qty = int.tryParse(qtyController.text) ?? 0;
                     
                     if (qty <= 0) {
-                      ScaffoldMessenger.of(pageContext).showSnackBar(
-                        const SnackBar(content: Text('Qty harus lebih dari 0')),
-                      );
+                      AppDialog.confirm(context, message: 'Qty harus lebih dari 0');
                       return;
                     }
                     
                     // 2. Validasi catatan yang lebih aman
                     if (!tambah && catatanController.text.trim().isEmpty) {
-                      ScaffoldMessenger.of(pageContext).showSnackBar(
-                        const SnackBar(content: Text('Catatan wajib untuk pengurangan stok')),
-                      );
+                      AppDialog.error(context, message: 'Catatan wajib untuk pengurangan stok');
                       return;
                     }
 
@@ -146,9 +143,7 @@ class _InventoryPageState extends State<InventoryPage> {
 
                     } catch (e) {
                       if (!pageContext.mounted) return;
-                      ScaffoldMessenger.of(pageContext).showSnackBar(
-                        SnackBar(content: Text('$e')),
-                      );
+                      AppDialog.error(context, message: e.toString());
                     }
                   },
                   child: const Text('Simpan'),

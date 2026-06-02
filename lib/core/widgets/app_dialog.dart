@@ -88,4 +88,17 @@ class AppDialog {
 
     return result ?? false;
   }
+  static void success(
+    BuildContext context, {
+    required String message,
+  }) {
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
 }

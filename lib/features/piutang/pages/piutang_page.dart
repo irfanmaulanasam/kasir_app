@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/formatters/currency_formatter.dart';
 import 'package:kasir_app/core/widgets/currency_text_field.dart';
 import '../../../core/widgets/app_dialog.dart';
 import '../../../data/local/piutang_repo.dart';
@@ -15,13 +16,6 @@ class PiutangPage extends StatefulWidget {
 
 class _PiutangPageState extends State<PiutangPage> {
   final PiutangRepo repo = PiutangRepo();
-  
-  String formatRupiah(int value) {
-    return 'Rp ${value.toString().replaceAllMapped(
-      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-      (match) => '${match[1]}.',
-    )}';
-  }
   
   List<Map<String, dynamic>> data = [];
   bool isLoading = false;
@@ -284,7 +278,7 @@ class _PiutangPageState extends State<PiutangPage> {
           
           return CustomerDebtCard(
             customer: customer,
-            rupiah: formatRupiah,
+            rupiah: CurrencyFormatter.format,
             onTap: () => navigateToCustomerDetail(customerId),
           );
         },

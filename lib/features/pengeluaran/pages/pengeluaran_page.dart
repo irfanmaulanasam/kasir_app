@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/widgets/app_dialog.dart';
 
 import '../../../core/widgets/currency_text_field.dart';
 import '../../../core/formatters/currency_formatter.dart';
@@ -52,9 +53,7 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
     final nominal = parseNominal();
 
     if (nominal <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nominal wajib diisi')),
-      );
+      AppDialog.error(context, message: 'Nominal wajib diisi');
       return;
     }
 
@@ -71,9 +70,7 @@ class _PengeluaranPageState extends State<PengeluaranPage> {
 
     loadData();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Pengeluaran berhasil dicatat')),
-    );
+    AppDialog.success(context, message: 'Pengeluaran berhasil dicatat');
   }
 
   @override

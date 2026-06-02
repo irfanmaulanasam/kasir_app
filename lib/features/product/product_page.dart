@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/widgets/app_dialog.dart';
 import 'package:kasir_app/features/splash/app_launcher_page.dart';
 import 'package:kasir_app/features/widgets/app_drawer.dart';
 
@@ -60,16 +61,12 @@ class _ProdukPageState extends State<ProdukPage> {
     final minimumStok = int.tryParse(minimumStokController.text.trim()) ?? 0;
 
     if (nama.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nama barang wajib diisi')),
-      );
+      AppDialog.error(context, message: 'Nama barang wajib diisi');
       return;
     }
 
     if (hargaJual <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Harga jual wajib lebih dari 0')),
-      );
+      AppDialog.error(context, message: 'Harga jual wajib lebih dari 0');
       return;
     }
 

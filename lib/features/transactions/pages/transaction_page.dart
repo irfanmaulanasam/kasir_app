@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/formatters/currency_formatter.dart';
+import 'package:kasir_app/core/widgets/app_dialog.dart';
 import 'package:kasir_app/features/transactions/models/cart_item.dart';
 import '../../../data/local/produk_repo.dart';
 import '../../../data/local/transaksi_repo.dart';
@@ -53,11 +55,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
     produkList = repo.getAll();
   });
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text('Produk baru ditambahkan'),
-    ),
-  );
+  AppDialog.success(context, message: 'Produk baru ditambahkan');
 }
 
 
@@ -100,11 +98,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
           ..addAll(updatedCart);
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Stok tidak cukup'),
-        ),
-      );
+      AppDialog.error(context, message: 'Stok tidak cukup');
     }
   }
 
@@ -125,20 +119,13 @@ class _TransaksiPageState extends State<TransaksiPage> {
     return TransactionService.getTotal(cart);
   }
 
-  String formatRupiah(int value) {
-    return 'Rp ${value.toString().replaceAllMapped(
-          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-          (match) => '${match[1]}.',
-        )}';
-  }
-
   Future<void> showCheckoutDialog() async {
     final result = await showDialog<PaymentResult>(
       context: context,
       builder: (dialogContext) {
         return PaymentDialog(
           total: getTotal(),
-          formatRupiah: formatRupiah,
+          formatRupiah: CurrencyFormatter.format,
         );
       },
     );
@@ -236,23 +223,9 @@ class _TransaksiPageState extends State<TransaksiPage> {
           ),
         ),
       );
-    } catch (e, stackTrace) { // <--- Tambahkan stackTrace di sini
-      // Cetak error ke console VS Code / Android Studio dengan jelas
-      debugPrint('=== ERROR TRANSAKSI TEMPO ===');
-      debugPrint('Pesan Error: $e');
-      debugPrint('Stack Trace:\n$stackTrace');
-      debugPrint('==============================');
-
+    } catch (e) { 
       if (!mounted) return;
-
-      // SnackBar tetap muncul untuk memberi tahu user
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red, // Beri warna merah agar mencolok
-          duration: const Duration(seconds: 5), // Lebih lama agar sempat terbaca
-          content: Text('Gagal simpan transaksi: $e'),
-        ),
-      );
+      AppDialog.error(context, message: 'Gagal simpan transaksi: $e');
     }
   } 
 
@@ -293,7 +266,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
             child: ProductListSection(
               produkList: produkList,
               searchQuery: searchQuery,
-              formatRupiah: formatRupiah,
+              formatRupiah: CurrencyFormatter.format,
               cartQtyByProductId: cart.map(
                 (key, value) => MapEntry(key, value.qty),
               ),
@@ -311,7 +284,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
             flex: 2,
             child: CartSection(
               cart: cart,
-              formatRupiah: formatRupiah,
+              formatRupiah: CurrencyFormatter.format,
               onDecrease: kurangiQty,
             ),
           ),
@@ -321,7 +294,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
           CheckoutBar(
             total: getTotal(),
             isCartEmpty: cart.isEmpty,
-            formatRupiah: formatRupiah,
+            formatRupiah: CurrencyFormatter.format,
             onCheckout: showCheckoutDialog,
           ),
         ],

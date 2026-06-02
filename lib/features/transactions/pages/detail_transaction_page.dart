@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/formatters/currency_formatter.dart';
 import '../../../data/local/transaksi_repo.dart';
 
 class DetailTransaksiPage extends StatefulWidget {
@@ -28,13 +29,6 @@ class _DetailTransaksiPageState
 
     detailList =
         repo.getDetailTransaksi(widget.transaksiId);
-  }
-
-  String formatRupiah(int value) {
-    return 'Rp ${value.toString().replaceAllMapped(
-      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-      (match) => '${match[1]}.',
-    )}';
   }
 
   int hitungTotal(List<Map<String, dynamic>> data) {
@@ -125,11 +119,11 @@ class _DetailTransaksiPageState
                           ),
 
                           subtitle: Text(
-                            '${formatRupiah(item['harga'])} x ${item['qty']}',
+                            '${CurrencyFormatter.format(item['harga'])} x ${item['qty']}',
                           ),
 
                           trailing: Text(
-                            formatRupiah(subtotal),
+                            CurrencyFormatter.format(subtotal),
                           ),
                         ),
                       );
@@ -143,7 +137,7 @@ class _DetailTransaksiPageState
                   width: double.infinity,
 
                   child: Text(
-                    'TOTAL: ${formatRupiah(hitungTotal(data))}',
+                    'TOTAL: ${CurrencyFormatter.format(hitungTotal(data))}',
 
                     style: const TextStyle(
                       fontSize: 20,

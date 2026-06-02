@@ -1,20 +1,28 @@
 class CurrencyFormatter {
+  static int parse(dynamic value) {
+    if (value is int) return value;
+
+    return int.tryParse(
+          value
+              .toString()
+              .replaceAll('.', '')
+              .replaceAll('Rp', '')
+              .trim(),
+        ) ??
+        0;
+  }
+
   static String format(dynamic value) {
-    final number = value is int
-        ? value
-        : int.tryParse(
-              value.toString().replaceAll('.', '').replaceAll('Rp', '').trim(),
-            ) ??
-            0;
+    final number = parse(value);
 
     return 'Rp ${number.toString().replaceAllMapped(
-          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-          (match) => '${match[1]}.',
-        )}';
+      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+      (match) => '${match[1]}.',
+    )}';
   }
 
   static String formatInput(String value) {
-    final number = value.replaceAll('.', '').trim();
+    final number = value.replaceAll('.', '').replaceAll('Rp', '').trim();
 
     if (number.isEmpty) return '';
 
@@ -22,12 +30,5 @@ class CurrencyFormatter {
       RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
       (match) => '${match[1]}.',
     );
-  }
-
-  static int parse(String value) {
-    return int.tryParse(
-          value.replaceAll('.', '').replaceAll('Rp', '').trim(),
-        ) ??
-        0;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/widgets/app_dialog.dart';
 
 import '../../../core/widgets/currency_text_field.dart';
 
@@ -97,11 +98,7 @@ class _QuickAddProductDialogState extends State<QuickAddProductDialog> {
             final stok = int.tryParse(stokController.text.trim()) ?? 0;
 
             if (nama.isEmpty || harga <= 0) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Nama dan harga wajib diisi'),
-                ),
-              );
+              AppDialog.error(context, message: 'Nama dan harga wajib diisi');
               return;
             }
 
