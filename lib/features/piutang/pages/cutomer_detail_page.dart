@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-
 import '../../../core/formatters/currency_formatter.dart';
 import '../../../core/widgets/currency_text_field.dart';
+import '../../../core/widgets/app_dialog.dart';
 import '../../../data/local/piutang_repo.dart';
+import 'package:intl/intl.dart';
 
 class CustomerDetailPage extends StatefulWidget {
   final int customerId;
@@ -21,8 +22,8 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
 
   Map<String, dynamic>? detail;
   List<Map<String, dynamic>> piutangList = [];
-
   bool isLoading = true;
+  bool isPaying = false;
 
   @override
   void initState() {
@@ -31,10 +32,13 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
   }
 
   Future<void> showBayarCustomerDialog() async {
+    if (isPaying) return;
+    
     final controller = TextEditingController();
 
     await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Bayar Hutang'),
@@ -52,32 +56,69 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
             ElevatedButton(
               onPressed: () async {
                 final nominal = int.tryParse(
-                      controller.text.replaceAll('.', '').trim(),
-                    ) ??
-                    0;
+                  controller.text.replaceAll('.', '').trim(),
+                ) ?? 0;
 
                 final sisa = detail?['sisa_hutang'] as int? ?? 0;
 
                 if (nominal <= 0) {
+                  await AppDialog.error(
+                    dialogContext,
+                    message: 'Nominal harus lebih dari 0',
+                  );
                   return;
                 }
 
                 if (nominal > sisa) {
+                  await AppDialog.error(
+                    dialogContext,
+                    message: 'Nominal bayar melebihi sisa hutang',
+                  );
                   return;
                 }
 
-                await repo.bayarCustomerPiutang(
-                  customerId: widget.customerId,
-                  nominal: nominal,
-                );
+                setState(() {
+                  isPaying = true;
+                });
 
-                if (!dialogContext.mounted) return;
-                Navigator.pop(dialogContext);
+                try {
+                  await repo.bayarCustomerPiutang(
+                    customerId: widget.customerId,
+                    nominal: nominal,
+                  );
 
-                if (!mounted) return;
-                await loadData();
+                  if (!dialogContext.mounted) return;
+                  Navigator.pop(dialogContext);
+
+                  if (!mounted) return;
+                  await loadData();
+                  
+                  if (!mounted) return;
+                  await AppDialog.info(
+                    context,
+                    message: 'Pembayaran hutang berhasil',
+                  );
+                } catch (e) {
+                  if (!dialogContext.mounted) return;
+                  await AppDialog.error(
+                    dialogContext,
+                    message: 'Gagal membayar hutang: $e',
+                  );
+                } finally {
+                  if (mounted) {
+                    setState(() {
+                      isPaying = false;
+                    });
+                  }
+                }
               },
-              child: const Text('Simpan'),
+              child: isPaying
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Simpan'),
             ),
           ],
         );
@@ -86,16 +127,36 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
   }
 
   Future<void> loadData() async {
-    final detailResult = await repo.getCustomerDebtDetail(widget.customerId);
-    final listResult = await repo.getCustomerPiutangList(widget.customerId);
-
-    if (!mounted) return;
-
     setState(() {
-      detail = detailResult;
-      piutangList = listResult;
-      isLoading = false;
+      isLoading = true;
     });
+    
+    try {
+      final detailResult = await repo.getCustomerDebtDetail(widget.customerId);
+      final listResult = await repo.getCustomerPiutangList(widget.customerId);
+
+      if (!mounted) return;
+
+      setState(() {
+        detail = detailResult;
+        piutangList = listResult;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      
+      setState(() {
+        isLoading = false;
+      });
+      
+      await AppDialog.error(
+        context,
+        message: 'Gagal memuat data: $e',
+      );
+      
+      if (!mounted) return;
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -110,15 +171,16 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
 
     final nama = detail!['nama']?.toString() ?? 'Pelanggan';
     final noHp = detail!['no_hp']?.toString() ?? '';
-    final totalHutang = detail!['total_hutang'] ?? 0;
-    final totalBayar = detail!['total_bayar'] ?? 0;
-    final sisaHutang = detail!['sisa_hutang'] ?? 0;
+    final totalHutang = detail!['total_hutang'] as int? ?? 0;
+    final totalBayar = detail!['total_bayar'] as int? ?? 0;
+    final sisaHutang = detail!['sisa_hutang'] as int? ?? 0;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(nama),
       ),
-      body: SafeArea(
+      body: RefreshIndicator(
+        onRefresh: loadData,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -159,22 +221,26 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: sisaHutang <= 0
-                            ? null
-                            : () {
-                                showBayarCustomerDialog();
-                              },
-                        icon: const Icon(Icons.payments_outlined),
-                        label: const Text('Bayar Hutang'),
+                        onPressed: (sisaHutang <= 0 || isPaying) 
+                            ? null 
+                            : showBayarCustomerDialog,
+                        icon: isPaying
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(Icons.payments_outlined),
+                        label: isPaying 
+                            ? const Text('Memproses...')
+                            : const Text('Bayar Hutang'),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
             const Text(
               'Daftar Bon',
               style: TextStyle(
@@ -182,38 +248,73 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             const SizedBox(height: 8),
-
             if (piutangList.isEmpty)
               const Card(
-                child: ListTile(
-                  title: Text('Belum ada bon'),
+                child: Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Icon(Icons.receipt_long_outlined, size: 48, color: Colors.grey),
+                        SizedBox(height: 8),
+                        Text('Belum ada bon'),
+                      ],
+                    ),
+                  ),
                 ),
               )
             else
               ...piutangList.map((item) {
-                final total = item['total'] ?? 0;
-                final dibayar = item['dibayar'] ?? 0;
-                final sisa = item['sisa'] ?? 0;
+                final total = item['total'] as int? ?? 0;
+                final dibayar = item['dibayar'] as int? ?? 0;
+                final sisa = item['sisa'] as int? ?? 0;
                 final status = item['status']?.toString() ?? '-';
-
+                final tanggal = item['tanggal'] as int? ?? 0;
+                final date = DateTime.fromMillisecondsSinceEpoch(tanggal);
+                
                 return Card(
+                  margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     title: Text(
-                      'Bon #${item['id']}',
+                      DateFormat('dd MMM yyyy • HH:mm').format(date),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(
-                      'Status: $status\n'
-                      'Total: ${CurrencyFormatter.format(total)}\n'
-                      'Dibayar: ${CurrencyFormatter.format(dibayar)}\n'
-                      'Sisa: ${CurrencyFormatter.format(sisa)}',
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Tanggal: ${date.toString().split(' ')[0]}'),
+                        const SizedBox(height: 4),
+                        _getStatusBadge(status),
+                        Text('Total: ${CurrencyFormatter.format(total)}'),
+                        Text('Dibayar: ${CurrencyFormatter.format(dibayar)}'),
+                        Text('Sisa: ${CurrencyFormatter.format(sisa)}'),
+                      ],
                     ),
                     isThreeLine: true,
                   ),
                 );
               }),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getStatusBadge(String status) {
+    final isLunas = status.toUpperCase() == 'LUNAS';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: isLunas ? Colors.green : Colors.orange,
+        borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+        status,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -233,15 +334,24 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = TextStyle(
-      fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-    );
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: style),
-        Text(value, style: style),
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+            fontSize: 16,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+            fontSize: 16,
+            color: bold ? Colors.green.shade700 : null,
+          ),
+        ),
       ],
     );
   }
