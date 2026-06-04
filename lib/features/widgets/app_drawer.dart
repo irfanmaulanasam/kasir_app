@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/features/activity/pages/activity_page.dart';
 import 'package:kasir_app/features/inventory/pages/inventory_page.dart';
 import 'package:kasir_app/features/piutang/pages/piutang_page.dart';
-import '../summary/summary_page.dart';
-import '../transactions/pages/transaction_page.dart';
-import '../product/product_page.dart';
-import '../settings/settings_page.dart';
-import '../pengeluaran/pages/pengeluaran_page.dart';
+import 'package:kasir_app/features/transactions/pages/transaction_page.dart';
+import 'package:kasir_app/features/product/product_page.dart';
+import 'package:kasir_app/features/settings/settings_page.dart';
+import 'package:kasir_app/features/pengeluaran/pages/pengeluaran_page.dart';
 class AppDrawer extends StatelessWidget {
 
   final String currentPage;
@@ -104,9 +104,9 @@ class AppDrawer extends StatelessWidget {
 
           buildMenu(
             context: context,
-            title: 'Riwayat',
+            title: 'Aktifitas',
             icon: Icons.receipt_long,
-            page: const SummaryPage(),
+            page: const ActivityPage(),
           ),
 
           buildMenu(
