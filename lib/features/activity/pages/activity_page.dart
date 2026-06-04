@@ -52,6 +52,8 @@ class _ActivityPageState extends State<ActivityPage> {
         return Icons.add_box;
       case 'KELUAR':
         return Icons.indeterminate_check_box;
+      case 'PEMBAYARAN_PIUTANG':
+        return Icons.payments;
       default:
         return Icons.history;
     }
@@ -66,6 +68,8 @@ class _ActivityPageState extends State<ActivityPage> {
         return 'Penjualan ${CurrencyFormatter.format(nominal)}';
       case 'PENGELUARAN':
         return 'Pengeluaran ${CurrencyFormatter.format(nominal)}';
+      case 'PEMBAYARAN_PIUTANG':
+        return 'Pembayaran Piutang ${CurrencyFormatter.format(nominal)}';
       case 'MASUK':
         return 'Stok Masuk $nominal';
       case 'KELUAR':

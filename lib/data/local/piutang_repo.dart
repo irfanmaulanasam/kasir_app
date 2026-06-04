@@ -226,7 +226,7 @@ class PiutangRepo {
     }
   }
 
-  Future<void> bayarCustomerPiutang({
+ Future<void> bayarCustomerPiutang({
     required int customerId,
     required int nominal,
   }) async {
@@ -244,7 +244,9 @@ class PiutangRepo {
         );
 
         if (rows.isEmpty) {
-          throw Exception('Tidak ada piutang yang belum lunas untuk customer ini');
+          throw Exception(
+            'Tidak ada piutang yang belum lunas untuk customer ini',
+          );
         }
 
         for (final row in rows) {
@@ -254,7 +256,8 @@ class PiutangRepo {
           final dibayarLama = row['dibayar'] as int? ?? 0;
           final sisaLama = row['sisa'] as int? ?? 0;
 
-          final bayarUntukBon = sisaBayar >= sisaLama ? sisaLama : sisaBayar;
+          final bayarUntukBon =
+              sisaBayar >= sisaLama ? sisaLama : sisaBayar;
 
           final dibayarBaru = dibayarLama + bayarUntukBon;
           final sisaBaru = sisaLama - bayarUntukBon;
@@ -272,6 +275,13 @@ class PiutangRepo {
 
           sisaBayar -= bayarUntukBon;
         }
+
+        await txn.insert('piutang_payments', {
+          'customer_id': customerId,
+          'nominal': nominal,
+          'catatan': 'Pembayaran piutang',
+          'tanggal': DateTime.now().millisecondsSinceEpoch,
+        });
       });
     } catch (e) {
       debugPrint('Error bayar customer piutang: $e');
