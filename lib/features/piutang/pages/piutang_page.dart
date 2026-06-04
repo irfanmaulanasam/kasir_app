@@ -42,10 +42,6 @@ class _PiutangPageState extends State<PiutangPage> {
 
     try {
       final result = await repo.getCustomerSummary();
-      debugPrint('=====awal debug ====');
-      debugPrint(result.toString());
-      debugPrint('=====akhir debug====');
-
       if (!mounted){
         isLoading = false;
         return;
