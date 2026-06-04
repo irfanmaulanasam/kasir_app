@@ -47,17 +47,30 @@ class ActivityRepo {
       WHERE tanggal >= ?
     ''', [startOfDay]);
 
+    final debtPayments = await db.rawQuery('''
+    SELECT
+      'PEMBAYARAN_PIUTANG' AS tipe,
+      pp.id AS reference_id,
+      pp.nominal,
+      pp.tanggal,
+      c.nama AS catatan
+    FROM piutang_payments pp
+    LEFT JOIN customers c ON c.id = pp.customer_id
+    WHERE pp.tanggal >= ?
+  ''', [startOfDay]);
+
     final activities = <Map<String, dynamic>>[
       ...sales,
       ...expenses,
       ...stocks,
+      ...debtPayments,
     ];
 
     activities.sort((a, b) {
       final aTanggal = a['tanggal'] as int? ?? 0;
       final bTanggal = b['tanggal'] as int? ?? 0;
 
-      return bTanggal.compareTo(aTanggal);
+      return aTanggal.compareTo(bTanggal);
     });
 
     return activities;
