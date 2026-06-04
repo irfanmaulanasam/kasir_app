@@ -25,12 +25,8 @@ class _PiutangPageState extends State<PiutangPage> {
   void initState() {
     super.initState();
     loadData();
-    _debugDb();
   }
 
-  Future<void> _debugDb() async {
-    await repo.debugPiutang();
-  }
 
   Future<void> loadData() async {
     // Cegah jika sedang loading atau refreshing
