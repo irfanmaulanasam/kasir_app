@@ -93,6 +93,16 @@ class DBHelper {
     ''');
 
     await db.execute('''
+      CREATE TABLE piutang_payments(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        customer_id INTEGER,
+        nominal INTEGER,
+        catatan TEXT,
+        tanggal INTEGER
+      )
+    ''');
+
+    await db.execute('''
       CREATE TABLE stok_log(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         produk_id INTEGER NOT NULL,
@@ -148,6 +158,10 @@ class DBHelper {
     await db.execute('CREATE INDEX idx_piutang_customer ON piutang(customer_id)');
     await db.execute('CREATE INDEX idx_piutang_status ON piutang(status)');
     await db.execute('CREATE INDEX idx_piutang_tanggal ON piutang(tanggal)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_piutang_customer_id ON piutang(customer_id)',);
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_piutang_status ON piutang(status)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_piutang_tanggal ON piutang(tanggal)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_piutang_payments_customer_id ON piutang_payments(customer_id)');
     await db.execute('CREATE INDEX idx_stok_log_produk ON stok_log(produk_id)');
     await db.execute('CREATE INDEX idx_pengeluaran_tanggal ON pengeluaran(tanggal)');
     await db.execute('CREATE INDEX idx_customers_nama ON customers(nama)');
