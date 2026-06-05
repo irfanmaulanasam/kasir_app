@@ -104,7 +104,7 @@ class AppDrawer extends StatelessWidget {
 
           buildMenu(
             context: context,
-            title: 'Aktifitas',
+            title: 'Aktivitas',
             icon: Icons.receipt_long,
             page: const ActivityPage(),
           ),

@@ -132,8 +132,13 @@ class _ActivityPageState extends State<ActivityPage> {
                 }
                 return 
                   ActivityItemCard(
-                    item: filteredActivities[index-2],
-                );
+                    item: filteredActivities[index - 2],
+                    onTap: () {
+                      openActivityDetail(
+                        filteredActivities[index - 2],
+                      );
+                    },
+                  );
               },
             ),
           )

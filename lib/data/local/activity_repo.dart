@@ -50,7 +50,7 @@ class ActivityRepo {
     final debtPayments = await db.rawQuery('''
     SELECT
       'PEMBAYARAN_PIUTANG' AS tipe,
-      pp.id AS reference_id,
+      pp.customer_id AS reference_id,
       pp.nominal,
       pp.tanggal,
       c.nama AS catatan
