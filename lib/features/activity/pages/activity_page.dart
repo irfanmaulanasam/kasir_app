@@ -96,7 +96,7 @@ class _ActivityPageState extends State<ActivityPage> {
                       }
                       return 
                         ActivityItemsCard(
-                          item: activities[index-1],
+                          item: filteredActivities[index-2],
                         );
                     },
                   ),
