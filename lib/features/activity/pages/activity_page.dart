@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kasir_app/features/activity/widgets/activity_filter_bar.dart';
 import 'package:kasir_app/features/activity/widgets/activity_item_card.dart';
 import 'package:kasir_app/features/activity/widgets/activity_summary_card.dart';
-
+import '../../transactions/pages/detail_transaction_page.dart';
+import '../../piutang/pages/cutomer_detail_page.dart';
 import '../../../../data/local/activity_repo.dart';
 import '../../widgets/app_drawer.dart';
 
@@ -15,8 +16,7 @@ class ActivityPage extends StatefulWidget {
 
 class _ActivityPageState extends State<ActivityPage> {
   final repo = ActivityRepo();
-  String selectedFilter = 'semua';
-  
+  String selectedFilter = 'SEMUA';
 
   List<Map<String, dynamic>> activities = [];
   Map<String, dynamic>? summary;
@@ -31,6 +31,40 @@ class _ActivityPageState extends State<ActivityPage> {
   }
   bool isLoading = true;
 
+  void openActivityDetail(Map<String, dynamic> item) {
+    final tipe = item['tipe']?.toString() ?? '';
+    final referenceId = item['reference_id'];
+
+    if (referenceId == null) return;
+
+    if (tipe == 'PENJUALAN') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailTransaksiPage(
+            transaksiId: referenceId as int,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (tipe == 'PENGELUARAN') {
+      // nanti arahkan ke detail pengeluaran
+    }
+
+    if (tipe == 'PEMBAYARAN_PIUTANG') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => CustomerDetailPage(
+            customerId: referenceId as int,
+          ),
+        ),
+      );
+      return;
+      }
+  }
   @override
   void initState() {
     super.initState();
@@ -67,39 +101,42 @@ class _ActivityPageState extends State<ActivityPage> {
       ),
       body: SafeArea(
         child: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : activities.isEmpty
             ? const Center(
-                child: CircularProgressIndicator(),
+                child: Text('Belum ada aktivitas hari ini'),
               )
-            : activities.isEmpty
-                ? const Center(
-                    child: Text('Belum ada aktivitas hari ini'),
-                  )
-                : ListView.builder(
-                    itemCount: activities.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return 
-                          ActivitySummaryCard(
-                          summary: summary,
-                        );
-                      }
+            : RefreshIndicator(
+              onRefresh: loadData,
+              child: ListView.builder(
+              itemCount: filteredActivities.length + 2,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return 
+                    ActivitySummaryCard(
+                    summary: summary,
+                  );
+                }
 
-                      if (index == 1) {
-                        return ActivityFilterBar(
-                          selectedFilter: selectedFilter,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedFilter = value;
-                            });
-                          },
-                        );
-                      }
-                      return 
-                        ActivityItemsCard(
-                          item: filteredActivities[index-2],
-                        );
+                if (index == 1) {
+                  return ActivityFilterBar(
+                    selectedFilter: selectedFilter,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedFilter = value;
+                      });
                     },
-                  ),
+                  );
+                }
+                return 
+                  ActivityItemCard(
+                    item: filteredActivities[index-2],
+                );
+              },
+            ),
+          )
       ),
     );
   }

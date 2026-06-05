@@ -3,12 +3,14 @@ import 'package:intl/intl.dart';
 import 'package:kasir_app/core/formatters/currency_formatter.dart';
 
 
-class ActivityItemsCard extends StatelessWidget{
+class ActivityItemCard extends StatelessWidget{
   final Map<String, dynamic> item;
+  final VoidCallback? onTap;
 
-  const ActivityItemsCard({
+  const ActivityItemCard({
     super.key,
     required this.item,
+    this.onTap
   });
 
   String formatTime(dynamic timestamp) {
@@ -75,6 +77,7 @@ class ActivityItemsCard extends StatelessWidget{
           vertical: 6,
         ),
         child: ListTile(
+          onTap: onTap,
           leading: CircleAvatar(
             child: Icon(
               iconForType(tipe),
