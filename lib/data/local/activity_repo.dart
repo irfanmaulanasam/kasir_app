@@ -75,4 +75,46 @@ class ActivityRepo {
 
     return activities;
   }
+  
+  Future<Map<String, dynamic>> getTodayCashSummary() async {
+    final db = await _dbHelper.db;
+
+    final now = DateTime.now();
+
+    final startOfDay = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).millisecondsSinceEpoch;
+
+    final sales = await db.rawQuery('''
+      SELECT COALESCE(SUM(total), 0) as total
+      FROM transaksi
+      WHERE tanggal >= ?
+    ''', [startOfDay]);
+
+    final expenses = await db.rawQuery('''
+      SELECT COALESCE(SUM(nominal), 0) as total
+      FROM pengeluaran
+      WHERE tanggal >= ?
+    ''', [startOfDay]);
+
+    final debtPayments = await db.rawQuery('''
+      SELECT COALESCE(SUM(nominal), 0) as total
+      FROM piutang_payments
+      WHERE tanggal >= ?
+    ''', [startOfDay]);
+
+    final uangMasuk = sales.first['total'] as int? ?? 0;
+    final uangKeluar = expenses.first['total'] as int? ?? 0;
+    final bayarPiutang = debtPayments.first['total'] as int? ?? 0;
+
+    return {
+      'uang_masuk': uangMasuk + bayarPiutang,
+      'penjualan': uangMasuk,
+      'bayar_piutang': bayarPiutang,
+      'uang_keluar': uangKeluar,
+      'kas_bersih': uangMasuk + bayarPiutang - uangKeluar,
+    };
+  }
 }
