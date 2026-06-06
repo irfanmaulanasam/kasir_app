@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/formatters/currency_formatter.dart';
 import '../../../data/local/summary_repo.dart';
 import '../widgets/app_drawer.dart';
 
@@ -30,16 +31,6 @@ class _SummaryPageState extends State<SummaryPage> {
     piutang = await repo.getPiutangSummary();
 
     setState(() {});
-  }
-
-  String rupiah(dynamic value) {
-
-    final number = value as int? ?? 0;
-
-    return 'Rp ${number.toString().replaceAllMapped(
-      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-      (match) => '${match[1]}.',
-    )}';
   }
 
   @override
@@ -77,7 +68,7 @@ class _SummaryPageState extends State<SummaryPage> {
                 'Transaksi: ${today!['transaksi']}',
               ),
               trailing: Text(
-                rupiah(today!['omzet']),
+                CurrencyFormatter.format(today!['omzet']),
               ),
             ),
           ),
@@ -89,7 +80,7 @@ class _SummaryPageState extends State<SummaryPage> {
                 'Transaksi: ${month!['transaksi']}',
               ),
               trailing: Text(
-                rupiah(month!['omzet']),
+                CurrencyFormatter.format(month!['omzet']),
               ),
             ),
           ),
@@ -101,7 +92,7 @@ class _SummaryPageState extends State<SummaryPage> {
                 'Belum Lunas: ${piutang!['jumlah']}',
               ),
               trailing: Text(
-                rupiah(piutang!['total']),
+                CurrencyFormatter.format(piutang!['total']),
               ),
             ),
           ),

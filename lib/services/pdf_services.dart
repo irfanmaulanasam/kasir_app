@@ -1,21 +1,14 @@
 import 'package:intl/intl.dart';
+import 'package:kasir_app/core/formatters/currency_formatter.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class PdfService {
-  // Fungsi format rupiah untuk PDF
-  static String rupiah(int value) {
-    return 'Rp ${value.toString().replaceAllMapped(
-      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-      (match) => '${match[1]}.',
-    )}';
-  }
 
-  // Fungsi format tanggal untuk PDF
   static String formatTanggal(int timestamp) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    return DateFormat('dd MMMM yyyy • HH:mm', 'id_ID').format(date);
+    return DateFormat('dd MMMM yyyy - HH:mm', 'id_ID').format(date);
   }
 
   static Future<void> printReceipt({
@@ -74,8 +67,8 @@ class PdfService {
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text('${item['qty']} x ${rupiah(item['harga'])}', style: const pw.TextStyle(fontSize: 11)),
-                          pw.Text(rupiah(subtotal), style: const pw.TextStyle(fontSize: 11)),
+                          pw.Text('${item['qty']} x ${CurrencyFormatter.format(item['harga'])}', style: const pw.TextStyle(fontSize: 11)),
+                          pw.Text(CurrencyFormatter.format(subtotal), style: const pw.TextStyle(fontSize: 11)),
                         ],
                       ),
                     ],
@@ -90,7 +83,7 @@ class PdfService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text('TOTAL', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13)),
-                  pw.Text(rupiah(transaksi['total']), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13)),
+                  pw.Text(CurrencyFormatter.format(transaksi['total']), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13)),
                 ],
               ),
               pw.SizedBox(height: 10),
@@ -107,14 +100,14 @@ class PdfService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text('Bayar', style: const pw.TextStyle(fontSize: 10)),
-                  pw.Text(rupiah(transaksi['bayar'] ?? 0), style: const pw.TextStyle(fontSize: 10)),
+                  pw.Text(CurrencyFormatter.format(transaksi['bayar'] ?? 0), style: const pw.TextStyle(fontSize: 10)),
                 ],
               ),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text('Kembalian', style: const pw.TextStyle(fontSize: 10)),
-                  pw.Text(rupiah(transaksi['kembalian'] ?? 0), style: const pw.TextStyle(fontSize: 10)),
+                  pw.Text(CurrencyFormatter.format(transaksi['kembalian'] ?? 0), style: const pw.TextStyle(fontSize: 10)),
                 ],
               ),
               pw.SizedBox(height: 20),

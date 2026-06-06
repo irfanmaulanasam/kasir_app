@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/formatters/currency_formatter.dart';
 import 'package:kasir_app/core/widgets/app_dialog.dart';
 import 'package:kasir_app/features/widgets/app_drawer.dart';
 import '../../../data/local/produk_repo.dart';
@@ -24,13 +25,6 @@ class _InventoryPageState extends State<InventoryPage> {
     setState(() {
       produkList = repo.getAll();
     });
-  }
-
-  String rupiah(int value) {
-    return 'Rp ${value.toString().replaceAllMapped(
-          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-          (m) => '${m[1]}.',
-        )}';
   }
 
   Future<void> showAdjustDialog(
@@ -344,7 +338,7 @@ class _InventoryPageState extends State<InventoryPage> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '${rupiah(produk['harga'] as int)} | Stok: $stok • Min: $minimum',
+                          '${CurrencyFormatter.format(produk['harga'] as int)} | Stok: $stok • Min: $minimum',
                         ),
                         const SizedBox(height: 12),
                         Row(
