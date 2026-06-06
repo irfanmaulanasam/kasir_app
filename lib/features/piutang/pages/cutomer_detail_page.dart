@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/widgets/info_row.dart';
 import '../../../core/formatters/currency_formatter.dart';
 import '../../../core/widgets/currency_text_field.dart';
 import '../../../core/widgets/app_dialog.dart';
@@ -202,17 +203,17 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                       Text(noHp),
                     ],
                     const Divider(height: 28),
-                    _InfoRow(
+                    InfoRow(
                       label: 'Total Hutang',
                       value: CurrencyFormatter.format(totalHutang),
                     ),
                     const SizedBox(height: 8),
-                    _InfoRow(
+                    InfoRow(
                       label: 'Total Dibayar',
                       value: CurrencyFormatter.format(totalBayar),
                     ),
                     const SizedBox(height: 8),
-                    _InfoRow(
+                    InfoRow(
                       label: 'Sisa Hutang',
                       value: CurrencyFormatter.format(sisaHutang),
                       bold: true,
@@ -317,42 +318,6 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
           fontWeight: FontWeight.bold,
         ),
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool bold;
-
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.bold = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-            fontSize: 16,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-            fontSize: 16,
-            color: bold ? Colors.green.shade700 : null,
-          ),
-        ),
-      ],
     );
   }
 }

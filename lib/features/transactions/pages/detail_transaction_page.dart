@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kasir_app/core/formatters/currency_formatter.dart';
+import 'package:kasir_app/core/widgets/info_row.dart';
 import '../../../data/local/transaksi_repo.dart';
 
 class DetailTransaksiPage extends StatefulWidget {
@@ -62,12 +63,13 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
               ),
             ),
             const Divider(height: 24),
-            _InfoRow(
+            
+            InfoRow(
               label: 'Metode Bayar',
               value: metodeBayar,
             ),
             const SizedBox(height: 8),
-            _InfoRow(
+            InfoRow(
               label: 'Total',
               value: CurrencyFormatter.format(total),
               bold: true,
@@ -184,33 +186,6 @@ class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
           },
         ),
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool bold;
-
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.bold = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final style = TextStyle(
-      fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-    );
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: style),
-        Text(value, style: style),
-      ],
     );
   }
 }

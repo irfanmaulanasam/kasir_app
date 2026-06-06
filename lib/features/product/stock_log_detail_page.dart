@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/widgets/info_row.dart';
 
 import '../../../data/local/produk_repo.dart';
 
@@ -86,14 +87,14 @@ class _StockLogDetailPageState extends State<StockLogDetailPage> {
 
                     const SizedBox(height: 8),
 
-                    _InfoRow(
+                    InfoRow(
                       label: 'Tanggal',
                       value: formatDate(tanggal),
                     ),
 
                     const Divider(height: 28),
 
-                    _InfoRow(
+                    InfoRow(
                       label: 'Tipe',
                       value: tipe,
                       bold: true,
@@ -101,7 +102,7 @@ class _StockLogDetailPageState extends State<StockLogDetailPage> {
 
                     const SizedBox(height: 8),
 
-                    _InfoRow(
+                    InfoRow(
                       label: 'Qty',
                       value: qty.toString(),
                       bold: true,
@@ -109,7 +110,7 @@ class _StockLogDetailPageState extends State<StockLogDetailPage> {
 
                     const SizedBox(height: 8),
 
-                    _InfoRow(
+                    InfoRow(
                       label: 'Catatan',
                       value: catatan,
                     ),
@@ -120,39 +121,6 @@ class _StockLogDetailPageState extends State<StockLogDetailPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool bold;
-
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.bold = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final style = TextStyle(
-      fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-    );
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: style),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: style,
-          ),
-        ),
-      ],
     );
   }
 }

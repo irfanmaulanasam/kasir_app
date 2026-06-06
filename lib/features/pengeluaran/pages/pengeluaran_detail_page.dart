@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/widgets/info_row.dart';
 
 import '../../../core/formatters/currency_formatter.dart';
 import '../../../data/local/pengeluaran_repo.dart';
@@ -84,18 +85,18 @@ class _PengeluaranDetailPageState extends State<PengeluaranDetailPage> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    _InfoRow(
+                    InfoRow(
                       label: 'Tanggal',
                       value: formatDate(tanggal),
                     ),
                     const Divider(height: 28),
-                    _InfoRow(
+                    InfoRow(
                       label: 'Nominal',
                       value: CurrencyFormatter.format(nominal),
                       bold: true,
                     ),
                     const SizedBox(height: 8),
-                    _InfoRow(
+                    InfoRow(
                       label: 'Catatan',
                       value: catatan,
                     ),
@@ -106,39 +107,6 @@ class _PengeluaranDetailPageState extends State<PengeluaranDetailPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool bold;
-
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.bold = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final style = TextStyle(
-      fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-    );
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: style),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: style,
-          ),
-        ),
-      ],
     );
   }
 }
