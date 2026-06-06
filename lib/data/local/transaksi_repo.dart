@@ -3,7 +3,14 @@ import '../../core/db/db_helper.dart';
 class TransaksiRepo {
   final DBHelper _dbHelper = DBHelper();
 
-  Future<int> simpanTransaksi(List<Map<String, dynamic>> cartItems) async {
+  Future<int> simpanTransaksi({
+    required List<Map<String, dynamic>> cartItems,
+    required int total,
+    required int bayar,
+    required int kembalian,
+    required String metodeBayar,
+    int? customerId,
+  }) async {
     if (cartItems.isEmpty) {
       throw Exception('Cart kosong');
     }
@@ -20,6 +27,8 @@ class TransaksiRepo {
       final transaksiId = await txn.insert('transaksi', {
         'tanggal': DateTime.now().millisecondsSinceEpoch,
         'total': total,
+        'metode_bayar': metodeBayar,
+        'customer_id': customerId,
       });
 
       for (final item in cartItems) {
@@ -96,5 +105,20 @@ class TransaksiRepo {
       JOIN produk ON produk.id = detail.produk_id
       WHERE detail.transaksi_id = ?
     ''', [transaksiId]);
+  }
+
+  Future<Map<String, dynamic>?> getTransaksiById(int transaksiId) async {
+    final db = await _dbHelper.db;
+
+    final result = await db.query(
+      'transaksi',
+      where: 'id = ?',
+      whereArgs: [transaksiId],
+      limit: 1,
+    );
+
+    if (result.isEmpty) return null;
+
+    return result.first;
   }
 }

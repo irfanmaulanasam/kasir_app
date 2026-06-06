@@ -3,7 +3,6 @@ import 'package:kasir_app/core/formatters/currency_formatter.dart';
 import '../../../data/local/transaksi_repo.dart';
 
 class DetailTransaksiPage extends StatefulWidget {
-
   final int transaksiId;
 
   const DetailTransaksiPage({
@@ -12,133 +11,168 @@ class DetailTransaksiPage extends StatefulWidget {
   });
 
   @override
-  State<DetailTransaksiPage> createState() =>
-      _DetailTransaksiPageState();
+  State<DetailTransaksiPage> createState() => _DetailTransaksiPageState();
 }
 
-class _DetailTransaksiPageState
-    extends State<DetailTransaksiPage> {
-
+class _DetailTransaksiPageState extends State<DetailTransaksiPage> {
   final TransaksiRepo repo = TransaksiRepo();
 
+  Future<Map<String, dynamic>?>? transaksiData;
   Future<List<Map<String, dynamic>>>? detailList;
 
   @override
   void initState() {
     super.initState();
-
-    detailList =
-        repo.getDetailTransaksi(widget.transaksiId);
+    transaksiData = repo.getTransaksiById(widget.transaksiId);
+    detailList = repo.getDetailTransaksi(widget.transaksiId);
   }
 
   int hitungTotal(List<Map<String, dynamic>> data) {
-
     int total = 0;
 
-    for (var item in data) {
-      total +=
-          (item['harga'] as int) *
-          (item['qty'] as int);
+    for (final item in data) {
+      total += (item['harga'] as int) * (item['qty'] as int);
     }
 
     return total;
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildTransactionInfo(Map<String, dynamic>? transaksi) {
+    if (transaksi == null) {
+      return const SizedBox.shrink();
+    }
 
-    return Scaffold(
+    final metodeBayar = transaksi['metode_bayar']?.toString() ?? '-';
+    final total = transaksi['total'] as int? ?? 0;
+    final nomor = transaksi['nomor_transaksi']?.toString() ??
+        'Transaksi #${widget.transaksiId}';
 
-      appBar: AppBar(
-        title: Text(
-          'Transaksi #${widget.transaksiId}',
+    return Card(
+      margin: const EdgeInsets.all(12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              nomor,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(height: 24),
+            _InfoRow(
+              label: 'Metode Bayar',
+              value: metodeBayar,
+            ),
+            const SizedBox(height: 8),
+            _InfoRow(
+              label: 'Total',
+              value: CurrencyFormatter.format(total),
+              bold: true,
+            ),
+          ],
         ),
       ),
+    );
+  }
 
+  Widget buildItemList(List<Map<String, dynamic>> data) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        final item = data[index];
+
+        final harga = item['harga'] as int? ?? 0;
+        final qty = item['qty'] as int? ?? 0;
+        final subtotal = harga * qty;
+
+        return Card(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 6,
+          ),
+          child: ListTile(
+            title: Text(
+              item['nama'].toString(),
+            ),
+            subtitle: Text(
+              '${CurrencyFormatter.format(harga)} x $qty',
+            ),
+            trailing: Text(
+              CurrencyFormatter.format(subtotal),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Transaksi #${widget.transaksiId}'),
+      ),
       body: SafeArea(
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: detailList,
-
           builder: (context, snapshot) {
-
-            if (snapshot.connectionState ==
-                ConnectionState.waiting) {
-
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
 
             if (snapshot.hasError) {
-
               return Center(
-                child: Text(
-                  'Error: ${snapshot.error}',
-                ),
+                child: Text('Error: ${snapshot.error}'),
               );
             }
 
             final data = snapshot.data ?? [];
 
             if (data.isEmpty) {
-
               return const Center(
-                child: Text(
-                  'Tidak ada detail transaksi',
-                ),
+                child: Text('Tidak ada detail transaksi'),
               );
             }
 
             return Column(
               children: [
+                FutureBuilder<Map<String, dynamic>?>(
+                  future: transaksiData,
+                  builder: (context, transaksiSnapshot) {
+                    return buildTransactionInfo(
+                      transaksiSnapshot.data,
+                    );
+                  },
+                ),
+
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Daftar Barang',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
 
                 Expanded(
-                  child: ListView.builder(
-
-                    itemCount: data.length,
-
-                    itemBuilder: (context, index) {
-
-                      final item = data[index];
-
-                      final subtotal =
-                          (item['harga'] as int) *
-                          (item['qty'] as int);
-
-                      return Card(
-                        margin:
-                            const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-
-                        child: ListTile(
-
-                          title: Text(
-                            item['nama'].toString(),
-                          ),
-
-                          subtitle: Text(
-                            '${CurrencyFormatter.format(item['harga'])} x ${item['qty']}',
-                          ),
-
-                          trailing: Text(
-                            CurrencyFormatter.format(subtotal),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  child: buildItemList(data),
                 ),
 
                 Container(
                   padding: const EdgeInsets.all(16),
-
                   width: double.infinity,
-
                   child: Text(
                     'TOTAL: ${CurrencyFormatter.format(hitungTotal(data))}',
-
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -150,6 +184,33 @@ class _DetailTransaksiPageState
           },
         ),
       ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool bold;
+
+  const _InfoRow({
+    required this.label,
+    required this.value,
+    this.bold = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final style = TextStyle(
+      fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: style),
+        Text(value, style: style),
+      ],
     );
   }
 }

@@ -166,31 +166,41 @@ class _TransaksiPageState extends State<TransaksiPage> {
           .map((item) => item.toMap())
           .toList();
 
-      final transaksiId = await transaksiRepo.simpanTransaksi(
-        receiptItems,
-      );
+      int? customerId;
+      String? namaCustomer;
 
-      if (metodeBayar == 'Tempo') {
+      if (isTempo) {
         final customerRepo = CustomerRepo();
 
-        final namaCustomer = (namaPelanggan == null || namaPelanggan.trim().isEmpty)
+        namaCustomer = (namaPelanggan == null || namaPelanggan.trim().isEmpty)
             ? 'Pelanggan'
             : namaPelanggan.trim();
 
         final existingCustomer = await customerRepo.findByName(namaCustomer);
 
-        final customerId = existingCustomer?.id ??
+        customerId = existingCustomer?.id ??
             await customerRepo.insert(
               Customer(
                 nama: namaCustomer,
                 noHp: '',
               ),
             );
+      }
 
+      final transaksiId = await transaksiRepo.simpanTransaksi(
+        cartItems: receiptItems,
+        total: total,
+        bayar: bayar,
+        kembalian: isTempo ? 0 : kembalian,
+        metodeBayar: metodeBayar,
+        customerId: customerId,
+      );
+
+      if (isTempo && customerId != null) {
         await PiutangRepo().insert(
           customerId: customerId,
           transaksiId: transaksiId,
-          namaPelanggan: namaCustomer,
+          namaPelanggan: namaCustomer ?? 'Pelanggan',
           total: total,
           dibayar: bayar,
           catatan: catatan ?? '',
@@ -223,7 +233,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
           ),
         ),
       );
-    } catch (e) { 
+    } catch (e) {
       if (!mounted) return;
       AppDialog.error(context, message: 'Gagal simpan transaksi: $e');
     }
