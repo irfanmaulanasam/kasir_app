@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/formatters/currency_formatter.dart';
 import 'package:kasir_app/core/widgets/app_dialog.dart';
 
 import '../../../core/widgets/currency_text_field.dart';
@@ -48,13 +49,6 @@ class _QuickAddProductDialogState extends State<QuickAddProductDialog> {
     super.dispose();
   }
 
-  int parseCurrency(String value) {
-    return int.tryParse(
-          value.replaceAll('.', '').trim(),
-        ) ??
-        0;
-  }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -94,7 +88,7 @@ class _QuickAddProductDialogState extends State<QuickAddProductDialog> {
         ElevatedButton(
           onPressed: () {
             final nama = namaController.text.trim();
-            final harga = parseCurrency(hargaController.text);
+            final harga = CurrencyFormatter.parse(hargaController.text);
             final stok = int.tryParse(stokController.text.trim()) ?? 0;
 
             if (nama.isEmpty || harga <= 0) {
