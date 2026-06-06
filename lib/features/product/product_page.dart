@@ -44,10 +44,6 @@ class _ProdukPageState extends State<ProdukPage> {
     super.dispose();
   }
 
-  int parseCurrency(String value) {
-    return int.tryParse(value.replaceAll('.', '').trim()) ?? 0;
-  }
-
   void refreshProduk() {
     setState(() {
       produkList = repo.getAll();
@@ -56,8 +52,8 @@ class _ProdukPageState extends State<ProdukPage> {
 
   Future<void> simpan() async {
     final nama = namaController.text.trim();
-    final hargaJual = parseCurrency(hargaController.text);
-    final hargaBeli = parseCurrency(hargaBeliController.text);
+    final hargaJual = CurrencyFormatter.parse(hargaController.text);
+    final hargaBeli = CurrencyFormatter.parse(hargaBeliController.text);
     final minimumStok = int.tryParse(minimumStokController.text.trim()) ?? 0;
 
     if (nama.isEmpty) {
@@ -79,9 +75,6 @@ class _ProdukPageState extends State<ProdukPage> {
       'minimum_stok': minimumStok,
     });
 
-    final semuaProduk = await repo.getAll();
-    final isFirstProduct = semuaProduk.length == 1;
-
     if (!mounted) return;
 
     namaController.clear();
@@ -96,24 +89,11 @@ class _ProdukPageState extends State<ProdukPage> {
       produkList = repo.getAll();
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Produk berhasil disimpan'),
-        action: isFirstProduct
-            ? SnackBarAction(
-                label: 'Buka Kasir',
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AppLauncherPage(),
-                    ),
-                  );
-                },
-              )
-            : null,
-      ),
+    AppDialog.success(
+      context,
+      message: 'Produk berhasil disimpan',
     );
+
   }
 
   Widget buildFormInput() {
@@ -159,12 +139,29 @@ class _ProdukPageState extends State<ProdukPage> {
   }
 
   Widget buildSaveButton() {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: simpan,
-        child: const Text('Simpan'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ElevatedButton(
+            onPressed: simpan,
+            child: const Text('Simpan Produk'),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AppLauncherPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.point_of_sale),
+            label: const Text('Lanjut ke Kasir'),
+          ),
+        ],
       ),
     );
   }
