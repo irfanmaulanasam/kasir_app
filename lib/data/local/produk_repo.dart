@@ -134,4 +134,26 @@ class ProdukRepo {
       orderBy: 'tanggal DESC',
     );
   }
+  Future<Map<String, dynamic>?> getStockLogById(int id) async {
+    final db = await _dbHelper.db;
+
+    final result = await db.rawQuery('''
+      SELECT
+        s.id,
+        s.produk_id,
+        p.nama AS nama_produk,
+        s.qty,
+        s.tipe,
+        s.catatan,
+        s.tanggal
+      FROM stok_log s
+      LEFT JOIN produk p ON p.id = s.produk_id
+      WHERE s.id = ?
+      LIMIT 1
+    ''', [id]);
+
+    if (result.isEmpty) return null;
+
+    return result.first;
+  }
 }

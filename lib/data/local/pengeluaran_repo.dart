@@ -26,4 +26,18 @@ class PengeluaranRepo {
       orderBy: 'tanggal DESC',
     );
   }
+  Future<Map<String, dynamic>?> getById(int id) async {
+    final db = await _dbHelper.db;
+
+    final result = await db.query(
+      'pengeluaran',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+
+    if (result.isEmpty) return null;
+
+    return result.first;
+  }
 }
