@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kasir_app/features/activity/widgets/activity_filter_bar.dart';
 import 'package:kasir_app/features/activity/widgets/activity_item_card.dart';
+import 'package:kasir_app/features/activity/widgets/activity_range_bar.dart';
 import 'package:kasir_app/features/activity/widgets/activity_summary_card.dart';
-import '../../transactions/pages/detail_transaction_page.dart';
-import '../../piutang/pages/cutomer_detail_page.dart';
+
 import '../../../../data/local/activity_repo.dart';
+import '../../piutang/pages/cutomer_detail_page.dart';
+import '../../transactions/pages/detail_transaction_page.dart';
 import '../../widgets/app_drawer.dart';
 
 class ActivityPage extends StatefulWidget {
@@ -16,10 +18,25 @@ class ActivityPage extends StatefulWidget {
 
 class _ActivityPageState extends State<ActivityPage> {
   final repo = ActivityRepo();
+
   String selectedFilter = 'SEMUA';
+  bool isLoading = true;
 
   List<Map<String, dynamic>> activities = [];
   Map<String, dynamic>? summary;
+
+  DateTime selectedStart = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  DateTime selectedEnd = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day + 1,
+  );
+
   List<Map<String, dynamic>> get filteredActivities {
     if (selectedFilter == 'SEMUA') {
       return activities;
@@ -29,7 +46,71 @@ class _ActivityPageState extends State<ActivityPage> {
       return item['tipe'] == selectedFilter;
     }).toList();
   }
-  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    final start = selectedStart.millisecondsSinceEpoch;
+    final end = selectedEnd.millisecondsSinceEpoch;
+
+    final activityResult = await repo.getActivityByRange(
+      start: start,
+      end: end,
+    );
+
+    final summaryResult = await repo.getCashSummaryByRange(
+      start: start,
+      end: end,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      activities = activityResult;
+      summary = summaryResult;
+      isLoading = false;
+    });
+  }
+
+  void setToday() {
+    final now = DateTime.now();
+
+    setState(() {
+      selectedStart = DateTime(now.year, now.month, now.day);
+      selectedEnd = DateTime(now.year, now.month, now.day + 1);
+      isLoading = true;
+    });
+
+    loadData();
+  }
+
+  void setLast7Days() {
+    final now = DateTime.now();
+
+    setState(() {
+      selectedStart = DateTime(now.year, now.month, now.day - 6);
+      selectedEnd = DateTime(now.year, now.month, now.day + 1);
+      isLoading = true;
+    });
+
+    loadData();
+  }
+
+  void setLast30Days() {
+    final now = DateTime.now();
+
+    setState(() {
+      selectedStart = DateTime(now.year, now.month, now.day - 29);
+      selectedEnd = DateTime(now.year, now.month, now.day + 1);
+      isLoading = true;
+    });
+
+    loadData();
+  }
 
   void openActivityDetail(Map<String, dynamic> item) {
     final tipe = item['tipe']?.toString() ?? '';
@@ -49,10 +130,6 @@ class _ActivityPageState extends State<ActivityPage> {
       return;
     }
 
-    if (tipe == 'PENGELUARAN') {
-      // nanti arahkan ke detail pengeluaran
-    }
-
     if (tipe == 'PEMBAYARAN_PIUTANG') {
       Navigator.push(
         context,
@@ -62,26 +139,68 @@ class _ActivityPageState extends State<ActivityPage> {
           ),
         ),
       );
-      return;
-      }
-  }
-  @override
-  void initState() {
-    super.initState();
-    loadData();
+    }
   }
 
-  Future<void> loadData() async {
-    final activityResult = await repo.getTodayActivity();
-    final summaryResult = await repo.getTodayCashSummary();
+  Widget buildContent() {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
-    if (!mounted) return;
+    return RefreshIndicator(
+      onRefresh: loadData,
+      child: ListView.builder(
+        itemCount: filteredActivities.isEmpty
+            ? 4
+            : filteredActivities.length + 3,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return ActivitySummaryCard(
+              summary: summary,
+            );
+          }
 
-    setState(() {
-      activities = activityResult;
-      summary = summaryResult;
-      isLoading = false;
-    });
+          if (index == 1) {
+            return ActivityRangeBar(
+              onToday: setToday,
+              onLast7Days: setLast7Days,
+              onLast30Days: setLast30Days,
+            );
+          }
+
+          if (index == 2) {
+            return ActivityFilterBar(
+              selectedFilter: selectedFilter,
+              onChanged: (value) {
+                setState(() {
+                  selectedFilter = value;
+                });
+              },
+            );
+          }
+
+          if (filteredActivities.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.all(32),
+              child: Center(
+                child: Text('Belum ada aktivitas pada periode ini'),
+              ),
+            );
+          }
+
+          final item = filteredActivities[index - 3];
+
+          return ActivityItemCard(
+            item: item,
+            onTap: () {
+              openActivityDetail(item);
+            },
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -100,48 +219,7 @@ class _ActivityPageState extends State<ActivityPage> {
         currentPage: 'Aktivitas',
       ),
       body: SafeArea(
-        child: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : activities.isEmpty
-            ? const Center(
-                child: Text('Belum ada aktivitas hari ini'),
-              )
-            : RefreshIndicator(
-              onRefresh: loadData,
-              child: ListView.builder(
-              itemCount: filteredActivities.length + 2,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return 
-                    ActivitySummaryCard(
-                    summary: summary,
-                  );
-                }
-
-                if (index == 1) {
-                  return ActivityFilterBar(
-                    selectedFilter: selectedFilter,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedFilter = value;
-                      });
-                    },
-                  );
-                }
-                return 
-                  ActivityItemCard(
-                    item: filteredActivities[index - 2],
-                    onTap: () {
-                      openActivityDetail(
-                        filteredActivities[index - 2],
-                      );
-                    },
-                  );
-              },
-            ),
-          )
+        child: buildContent(),
       ),
     );
   }
