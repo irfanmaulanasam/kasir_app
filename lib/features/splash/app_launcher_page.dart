@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:kasir_app/features/splash/welcome_page.dart';
 import '../../data/local/settings_repo.dart';
 import '../../data/local/produk_repo.dart';
-
-import '../settings/setup_store_page.dart';
 import '../product/product_page.dart';
 import '../transactions/pages/transaction_page.dart';
 
@@ -30,7 +28,7 @@ class _AppLauncherPageState extends State<AppLauncherPage> {
     if (namaToko.toString().trim().isEmpty) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const SetupStorePage()),
+        MaterialPageRoute(builder: (_) => const WelcomePage()),
       );
       return;
     }

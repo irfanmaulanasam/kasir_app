@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/core/services/backup_service.dart';
+import 'package:kasir_app/core/widgets/app_dialog.dart';
 import 'package:kasir_app/features/widgets/app_drawer.dart';
-import '../../data/local/settings_repo.dart';
+import 'package:kasir_app/data/local/settings_repo.dart';
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -18,6 +20,7 @@ class _SettingsPageState
   final alamatController = TextEditingController();
   final teleponController = TextEditingController();
   final footerController = TextEditingController();
+  final backupService = BackupService();
 
   @override
   void initState() {
@@ -28,7 +31,6 @@ class _SettingsPageState
   Future<void> loadSettings() async {
 
     final data = await repo.getSettings();
-
     if (data == null) return;
 
     namaController.text =
@@ -132,6 +134,28 @@ class _SettingsPageState
 
                   child: const Text('Simpan'),
                 ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await backupService.shareBackup();
+
+                    if (!context.mounted) return;
+
+                    AppDialog.success(
+                      context,
+                      message: 'Backup berhasil dibuat',
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+
+                    await AppDialog.error(
+                      context,
+                      message: 'Gagal backup: $e',
+                    );
+                  }
+                },
+                child: const Text('Backup Data'),
               ),
             ],
           ),

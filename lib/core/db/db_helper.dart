@@ -171,4 +171,14 @@ class DBHelper {
 
   // _onUpgrade tidak diperlukan lagi karena version = 1
   // Jika di masa depan butuh migration, bisa ditambahkan kembali
+  static Future<void> closeDatabase() async {
+    if (_db != null) {
+      await _db!.close();
+      _db = null;
+    }
+  }
+
+  static void resetDatabase() {
+    _db = null;
+  }
 }
