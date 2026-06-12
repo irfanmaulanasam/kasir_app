@@ -36,8 +36,8 @@ class ActivitySummaryCard extends StatelessWidget{
             ),
             const SizedBox(height: 8),
             _SummaryRow(
-              label: 'Penjualan',
-              value: CurrencyFormatter.format(summary!['penjualan']),
+              label: 'Penjualan tunai',
+              value: CurrencyFormatter.format(summary!['penjualan_tunai']),
             ),
             const SizedBox(height: 8),
             _SummaryRow(

@@ -79,7 +79,13 @@ class ActivityRepo {
     final db = await _dbHelper.db;
 
     final sales = await db.rawQuery('''
-      SELECT COALESCE(SUM(total), 0) as total
+      SELECT
+        COALESCE(SUM(
+          CASE
+            WHEN metode_bayar = 'Tempo' THEN 0
+            ELSE total
+          END
+        ), 0) as total
       FROM transaksi
       WHERE tanggal >= ? AND tanggal < ?
     ''', [start, end]);
@@ -111,10 +117,11 @@ class ActivityRepo {
     return {
       'kas_awal': kasAwal,
       'uang_masuk': uangMasuk + bayarPiutang,
-      'penjualan': uangMasuk,
+      'penjualan_tunai': uangMasuk,
       'bayar_piutang': bayarPiutang,
       'uang_keluar': uangKeluar,
       'kas_bersih': uangMasuk + bayarPiutang - uangKeluar,
+      'kas_akhir': kasAwal + uangMasuk + bayarPiutang - uangKeluar,
     };
   }
 }
