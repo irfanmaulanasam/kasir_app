@@ -3,6 +3,8 @@ import 'package:kasir_app/core/services/backup_service.dart';
 import 'package:kasir_app/core/widgets/app_dialog.dart';
 import 'package:kasir_app/features/widgets/app_drawer.dart';
 import 'package:kasir_app/data/local/settings_repo.dart';
+import 'package:file_picker/file_picker.dart' as fp;
+import '../splash/app_launcher_page.dart';
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -135,27 +137,106 @@ class _SettingsPageState
                   child: const Text('Simpan'),
                 ),
               ),
-              ElevatedButton(
+              SizedBox(height: 12,),
+              ElevatedButton.icon(
                 onPressed: () async {
                   try {
-                    await backupService.shareBackup();
+                    final path = await backupService.createBackup();
 
                     if (!context.mounted) return;
 
                     AppDialog.success(
                       context,
-                      message: 'Backup berhasil dibuat',
+                      message: 'Backup berhasil disimpan.\n\nLokasi:\n$path',
                     );
                   } catch (e) {
                     if (!context.mounted) return;
 
-                    await AppDialog.error(
+                    AppDialog.error(
                       context,
                       message: 'Gagal backup: $e',
                     );
                   }
                 },
-                child: const Text('Backup Data'),
+                icon: const Icon(Icons.backup),
+                label: const Text('Backup Data'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () async {
+                  try {
+                    await backupService.shareLatestBackup();
+
+                    if (!context.mounted) return;
+
+                    AppDialog.success(
+                      context,
+                      message: 'Backup berhasil dibagikan.',
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+
+                    AppDialog.error(
+                      context,
+                      message: 'Gagal membagikan backup: $e',
+                    );
+                  }
+                },
+                icon: const Icon(Icons.share),
+                label: const Text('Bagikan Backup'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () async {
+                  try {
+                    final result = await fp.FilePicker.pickFiles(
+                      type: fp.FileType.custom,
+                      allowedExtensions: ['kasir', 'db'],
+                    );
+
+                    if (result == null || result.files.single.path == null) {
+                      return;
+                    }
+
+                    if (!context.mounted) return;
+
+                    final confirm = await AppDialog.confirm(
+                      context,
+                      title: 'Restore Backup',
+                      message:
+                          'Restore akan mengganti semua data aplikasi saat ini. Lanjutkan?',
+                      confirmText: 'Restore',
+                    );
+
+                    if (!confirm) return;
+
+                    await backupService.restoreBackup(
+                      result.files.single.path!,
+                    );
+
+                    if (!context.mounted) return;
+
+                    AppDialog.success(
+                      context,
+                      message: 'Restore berhasil. Aplikasi akan memuat ulang data.',
+                    );
+
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AppLauncherPage(),
+                      ),
+                      (route) => false,
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+
+                    AppDialog.error(
+                      context,
+                      message: 'Gagal restore: $e',
+                    );
+                  }
+                },
+                icon: const Icon(Icons.restore),
+                label: const Text('Restore Backup'),
               ),
             ],
           ),

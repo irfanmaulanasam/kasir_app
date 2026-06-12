@@ -96,11 +96,20 @@ class ActivityRepo {
       WHERE tanggal >= ? AND tanggal < ?
     ''', [start, end]);
 
+    final cashSession = await db.rawQuery('''
+      SELECT COALESCE(SUM(kas_awal), 0) as total
+      FROM cash_sessions
+      WHERE tanggal >= ? AND tanggal < ?
+    ''', [start, end]);
+
+
+    final kasAwal = cashSession.first['total'] as int? ?? 0;
     final uangMasuk = sales.first['total'] as int? ?? 0;
     final uangKeluar = expenses.first['total'] as int? ?? 0;
     final bayarPiutang = debtPayments.first['total'] as int? ?? 0;
 
     return {
+      'kas_awal': kasAwal,
       'uang_masuk': uangMasuk + bayarPiutang,
       'penjualan': uangMasuk,
       'bayar_piutang': bayarPiutang,

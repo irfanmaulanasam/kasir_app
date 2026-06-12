@@ -135,9 +135,14 @@ class DBHelper {
       )
     ''');
 
-    // Create indexes for performance
-    await _createIndexes(db);
-
+    await db.execute('''
+      CREATE TABLE cash_sessions(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tanggal INTEGER NOT NULL,
+      kas_awal INTEGER NOT NULL DEFAULT 0,
+      catatan TEXT
+      )'''
+    );
     // Insert default settings
     await db.insert('settings', {
       'id': 1,
@@ -146,6 +151,11 @@ class DBHelper {
       'telepon': '',
       'footer': 'Terima kasih telah berbelanja',
     });
+
+    // Create indexes for performance
+    await _createIndexes(db);
+
+
   }
 
   Future<void> _createIndexes(Database db) async {
@@ -167,6 +177,7 @@ class DBHelper {
     await db.execute('CREATE INDEX idx_customers_nama ON customers(nama)');
     await db.execute('CREATE INDEX idx_transaksi_nomor ON transaksi(nomor_transaksi)');
     await db.execute('CREATE INDEX idx_piutang_jatuh_tempo ON piutang(jatuh_tempo)');
+    await db.execute('CREATE INDEX idx_cash_sessions_tanggal ON cash_sessions(tanggal)');
   }
 
   // _onUpgrade tidak diperlukan lagi karena version = 1

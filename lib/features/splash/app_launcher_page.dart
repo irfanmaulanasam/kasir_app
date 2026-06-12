@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kasir_app/data/local/cash_session_repo.dart';
+import 'package:kasir_app/features/cash/widgets/open_cash_dialog.dart';
 import 'package:kasir_app/features/splash/welcome_page.dart';
 import '../../data/local/settings_repo.dart';
 import '../../data/local/produk_repo.dart';
@@ -44,6 +46,26 @@ class _AppLauncherPageState extends State<AppLauncherPage> {
       );
       return;
     }
+
+    final cashSession = await CashSessionRepo().getTodaySession();
+
+    if (!mounted) return;
+
+    if (cashSession == null) {
+      final result = await showDialog<Map<String, dynamic>>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const OpenCashDialog(),
+      );
+
+      if (result == null) return;
+
+      await CashSessionRepo().createTodaySession(
+        kasAwal: result['kas_awal'] as int? ?? 0,
+        catatan: result['catatan']?.toString() ?? '',
+      );
+      if(!mounted)return;
+    } 
 
     Navigator.pushReplacement(
       context,
