@@ -143,7 +143,38 @@ class DBHelper {
       catatan TEXT
       )'''
     );
-    // Insert default settings
+    await db.execute('''
+      CREATE TABLE suppliers(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nama TEXT NOT NULL UNIQUE,
+        no_hp TEXT DEFAULT '',
+        catatan TEXT DEFAULT ''
+      )'''
+    );
+    await db.execute('''
+      CREATE TABLE supplier_debts(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        supplier_id INTEGER NOT NULL,
+        total INTEGER NOT NULL,
+        dibayar INTEGER NOT NULL DEFAULT 0,
+        sisa INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        catatan TEXT,
+        tanggal INTEGER NOT NULL,
+        FOREIGN KEY(supplier_id)
+          REFERENCES suppliers(id)
+          ON DELETE RESTRICT
+      )'''
+    );
+    await db.execute('''
+      CREATE TABLE supplier_debt_payments(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        supplier_id INTEGER,
+        nominal INTEGER,
+        catatan TEXT,
+        tanggal INTEGER
+      )'''
+    );
     await db.insert('settings', {
       'id': 1,
       'nama_toko': '',
@@ -178,6 +209,9 @@ class DBHelper {
     await db.execute('CREATE INDEX idx_transaksi_nomor ON transaksi(nomor_transaksi)');
     await db.execute('CREATE INDEX idx_piutang_jatuh_tempo ON piutang(jatuh_tempo)');
     await db.execute('CREATE INDEX idx_cash_sessions_tanggal ON cash_sessions(tanggal)');
+    await db.execute('CREATE INDEX idx_supplier_nama ON suppliers(nama)',);
+    await db.execute('CREATE INDEX idx_supplier_debt_supplier ON supplier_debts(supplier_id)',);
+    await db.execute('CREATE INDEX idx_supplier_payment_supplier ON supplier_debt_payments(supplier_id)',);
   }
 
   // _onUpgrade tidak diperlukan lagi karena version = 1

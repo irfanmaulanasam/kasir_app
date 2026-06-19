@@ -32,6 +32,8 @@ class ActivityItemCard extends StatelessWidget{
         return Icons.indeterminate_check_box;
       case 'PEMBAYARAN_PIUTANG':
         return Icons.payments;
+      case 'PEMBAYARAN_HUTANG_SUPPLIER':
+        return Icons.local_shipping_outlined;
       default:
         return Icons.history;
     }
@@ -52,6 +54,8 @@ class ActivityItemCard extends StatelessWidget{
         return 'Stok Masuk $nominal';
       case 'KELUAR':
         return 'Stok Keluar $nominal';
+      case 'PEMBAYARAN_HUTANG_SUPPLIER':
+        return 'Bayar Hutang Supplier ${CurrencyFormatter.format(nominal)}';
       default:
         return tipe;
     }

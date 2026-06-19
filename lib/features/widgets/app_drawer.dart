@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kasir_app/features/activity/pages/activity_page.dart';
+import 'package:kasir_app/features/supplier/pages/supplier_page.dart';
 import 'package:kasir_app/features/inventory/pages/inventory_page.dart';
 import 'package:kasir_app/features/piutang/pages/piutang_page.dart';
 import 'package:kasir_app/features/transactions/pages/transaction_page.dart';
@@ -114,14 +115,20 @@ class AppDrawer extends StatelessWidget {
             title: 'piutang',
             icon: Icons.people_alt_outlined,
             page: const PiutangPage()
-            ),
+          ),
 
+          buildMenu(
+            context: context, title: 'Hutang Supplier', 
+            icon: Icons.local_shipping_outlined,
+            page: const SupplierPage()
+          ),
+          
           buildMenu(
             context: context,
             title: 'Store Settings',
             icon: Icons.settings,
             page: const SettingsPage(),
-        ),
+          ),
         ],
       ),
     );

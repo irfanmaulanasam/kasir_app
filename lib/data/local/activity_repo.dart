@@ -55,11 +55,24 @@ class ActivityRepo {
       WHERE pp.tanggal >= ? AND pp.tanggal < ?
     ''', [start, end]);
 
+    final supplierDebtPayments = await db.rawQuery('''
+      SELECT
+        'PEMBAYARAN_HUTANG_SUPPLIER' AS tipe,
+        sp.supplier_id AS reference_id,
+        sp.nominal,
+        sp.tanggal,
+        s.nama AS catatan
+      FROM supplier_debt_payments sp
+      LEFT JOIN suppliers s ON s.id = sp.supplier_id
+      WHERE sp.tanggal >= ? AND sp.tanggal < ?
+    ''', [start, end]);
+
     final activities = <Map<String, dynamic>>[
       ...sales,
       ...expenses,
       ...stocks,
       ...debtPayments,
+      ...supplierDebtPayments
     ];
 
     activities.sort((a, b) {
@@ -108,10 +121,19 @@ class ActivityRepo {
       WHERE tanggal >= ? AND tanggal < ?
     ''', [start, end]);
 
+    final supplierDebtPayments = await db.rawQuery('''
+      SELECT COALESCE(SUM(nominal), 0) as total
+      FROM supplier_debt_payments
+      WHERE tanggal >= ? AND tanggal < ?
+    ''', [start, end]);
+
+    final bayarHutangSupplier =
+        supplierDebtPayments.first['total'] as int? ?? 0;
 
     final kasAwal = cashSession.first['total'] as int? ?? 0;
     final uangMasuk = sales.first['total'] as int? ?? 0;
-    final uangKeluar = expenses.first['total'] as int? ?? 0;
+    final pengeluaranUsaha = expenses.first['total'] as int? ?? 0;
+    final uangKeluar = pengeluaranUsaha + bayarHutangSupplier;
     final bayarPiutang = debtPayments.first['total'] as int? ?? 0;
 
     return {
@@ -119,6 +141,8 @@ class ActivityRepo {
       'uang_masuk': uangMasuk + bayarPiutang,
       'penjualan_tunai': uangMasuk,
       'bayar_piutang': bayarPiutang,
+      'pengeluaran_usaha': pengeluaranUsaha,
+      'bayar_hutang_supplier': bayarHutangSupplier,
       'uang_keluar': uangKeluar,
       'kas_bersih': uangMasuk + bayarPiutang - uangKeluar,
       'kas_akhir': kasAwal + uangMasuk + bayarPiutang - uangKeluar,
