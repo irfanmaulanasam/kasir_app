@@ -142,7 +142,7 @@ class _ActivityPageState extends State<ActivityPage> {
         ),
       );
     }
-    if (tipe == 'MASUK' || tipe == 'KELUAR' || tipe == 'ADJUSTMENT') {
+    if (tipe == 'STOK MASUK' || tipe == 'STOK KELUAR' || tipe == 'STOK ADJUSTMENT') {
       Navigator.push(
         context,
         MaterialPageRoute(

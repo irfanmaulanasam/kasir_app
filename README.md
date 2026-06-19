@@ -1,8 +1,17 @@
 # Kasir App
 
-Lightweight offline-first POS application built with Flutter for UMKM.
-Kasir App is designed to prioritize operational reliability,
-fast workflow, and lightweight performance over unnecessary complexity.
+Kasir sederhana dengan pencatatan usaha kecil.
+
+Fokus aplikasi:
+
+- Mencatat transaksi
+- Mengelola stok
+- Mengelola kas
+- Mengelola piutang
+- Mengelola hutang supplier
+- Membantu pemilik usaha memahami kondisi usahanya
+
+Bukan software akuntansi penuh, tetapi jembatan antara kasir dan pencatatan usaha.
 
 ## Focus
 - fast transaction flow

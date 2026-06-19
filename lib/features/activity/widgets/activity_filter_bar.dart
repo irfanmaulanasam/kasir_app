@@ -15,8 +15,9 @@ class ActivityFilterBar extends StatelessWidget {
     'PENJUALAN',
     'PENGELUARAN',
     'PEMBAYARAN_PIUTANG',
-    'MASUK',
-    'KELUAR',
+    'STOK MASUK',
+    'STOK KELUAR',
+    'PEMBAYARAN HUTANG SUPPLIER'
   ];
 
   @override
