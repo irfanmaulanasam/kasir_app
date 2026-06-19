@@ -5,6 +5,7 @@ import 'package:kasir_app/features/activity/widgets/activity_range_bar.dart';
 import 'package:kasir_app/features/activity/widgets/activity_summary_card.dart';
 import 'package:kasir_app/features/pengeluaran/pages/pengeluaran_detail_page.dart';
 import 'package:kasir_app/features/product/stock_log_detail_page.dart';
+import 'package:kasir_app/features/supplier/pages/supplier_detail_page.dart';
 import '../../../../data/local/activity_repo.dart';
 import '../../piutang/pages/cutomer_detail_page.dart';
 import '../../transactions/pages/detail_transaction_page.dart';
@@ -158,6 +159,17 @@ class _ActivityPageState extends State<ActivityPage> {
         MaterialPageRoute(
           builder: (_) => PengeluaranDetailPage(
             pengeluaranId: referenceId as int,
+          ),
+        ),
+      );
+      return;
+    }
+    if (tipe == 'PEMBAYARAN_HUTANG_SUPPLIER') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SupplierDetailPage(
+            supplierId: referenceId as int,
           ),
         ),
       );

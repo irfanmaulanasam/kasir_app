@@ -294,3 +294,36 @@
 - Currency formatting for debt payments
 - Receipt header alignment
 
+## v0.4.0-alpha
+
+### Added
+
+#### Supplier Debt
+
+* Supplier debt management
+* Add supplier debt manually
+* Partial supplier debt payment
+* Full supplier debt settlement
+* Supplier debt detail page
+* Supplier payment history
+* Active / Paid supplier filter
+
+#### Activity
+
+* Supplier debt payments now appear in activity timeline
+
+#### Cash Flow
+
+* Supplier debt payments now reduce cash balance
+* Supplier debt payments included in cash summary
+
+### Improved
+
+* Automatic refresh after supplier debt settlement
+* Better supplier debt workflow
+* Payment validation for overpayment prevention
+
+### Fixed
+
+* Supplier list not refreshing after debt payment
+* Dialog controller lifecycle issues
