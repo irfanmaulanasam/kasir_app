@@ -1,298 +1,4 @@
-# Changelog
-
-# Changelog
-
-## v0.3.0-alpha
-
-### Added
-
-#### Activity
-
-* Activity timeline
-* Activity filter (Semua, Penjualan, Pengeluaran, Stok, Piutang)
-* Activity period filter (Hari Ini, 7 Hari, 30 Hari)
-* Activity cash summary
-* Pull-to-refresh activity page
-
-#### Piutang
-
-* Customer detail page
-* Customer debt summary
-* Debt payment history table
-* Customer-based debt settlement workflow
-
-#### Expenses
-
-* Expense detail page
-* Activity integration for expenses
-
-#### Inventory
-
-* Stock log detail page
-* Activity integration for stock movement
-
-#### Transactions
-
-* Transaction detail page improvements
-* Transaction navigation from Activity page
-
-### Improved
-
-#### UX
-
-* Replaced most SnackBar notifications with AppDialog
-* Better navigation flow between modules
-* Cleaner activity timeline layout
-* Better readability for transaction and debt workflow
-
-#### Architecture
-
-* ActivityPage refactored into modular widgets
-* ActivitySummaryCard extracted
-* ActivityItemCard extracted
-* ActivityFilterBar extracted
-* ActivityRangeBar extracted
-
-### Fixed
-
-* Debt summary loading issue
-* Null customer references in debt records
-* Customer debt detail crash
-* Payment validation issues
-* Activity sorting consistency
-
----
-
-## v0.2.0-alpha
-
-### Added
-
-* Stock history
-* Improved payment flow
-* Restructured README
-* Optimized transaction cart
-
----
-
-## v0.1.0-alpha
-
-### Added
-
-#### Product Management
-
-* Tambah produk
-* Edit produk dasar
-* Stok awal saat membuat produk
-* Harga jual
-* Harga beli
-* Minimum stok
-* Satuan dasar produk
-
-#### Inventory
-
-* Tambah stok manual
-* Kurangi stok manual
-* Catatan penyesuaian stok
-* Histori pergerakan stok
-* Warning stok minimum
-* Validasi stok tidak boleh minus
-
-#### Transaction
-
-* Cart transaksi
-* Penambahan produk ke cart
-* Pengurangan qty item
-* Perhitungan total otomatis
-* Dialog pembayaran
-* Perhitungan kembalian otomatis
-* Simpan transaksi ke database
-
-#### Receipt
-
-* Receipt preview
-* Informasi toko
-* Detail item transaksi
-* Ringkasan pembayaran
-* Export PDF receipt
-
-#### Settings
-
-* Nama toko
-* Alamat toko
-* Telepon toko
-* Footer nota
-
-#### Customer & Debt
-
-* Customer model
-* Customer repository
-* Customer database table
-* Tempo payment workflow
-* Piutang page
-* Debt payment dialog
-* Receipt payment status
-
-### Improved
-
-#### Architecture
-
-* Refactor TransactionPage menjadi widget modular
-* CartSection dipisahkan
-* ProductListSection dipisahkan
-* CheckoutBar dipisahkan
-* PaymentDialog dipisahkan
-* QuickAddProductDialog dipisahkan
-
-#### Formatting
-
-* CurrencyFormatter dibuat reusable
-* DateFormatter dibuat reusable
-
-#### UX
-
-* Produk dapat ditambah langsung dari halaman transaksi
-* Inventory adjustment memiliki alasan dan catatan
-* Warning stok minimum lebih jelas
-* Histori stok lebih mudah dibaca
-
-### Fixed
-
-* Bug qty transaksi melebihi stok
-* Bug refresh data inventory setelah adjustment
-* Bug penggunaan BuildContext setelah async operation
-* Bug formatting currency pada beberapa halaman
-* Bug duplicate logic pada beberapa widget
-* QRIS and Transfer now require full payment
-* Prevent overpayment on debt settlement
-* Currency formatting for debt payments
-* Receipt header alignment
-
-### Internal
-
-* Persiapan modular architecture
-* Persiapan flavor BASIC / ADVANCED / PRO
-* Persiapan inventory scaling
-* Persiapan custom unit conversion
-
-## v0.2.0-alpha
-- add stock history
-- improve payment flow
-- restructure README
-- optimize transaction cart
-
----
-
-## v0.1.0-alpha
-- initial project setup
-- basic inventory
-- local database
-
-### Added
-
-#### Product Management
-
-* Tambah produk
-* Edit produk dasar
-* Stok awal saat membuat produk
-* Harga jual
-* Harga beli
-* Minimum stok
-* Satuan dasar produk
-
-#### Inventory
-
-* Tambah stok manual
-* Kurangi stok manual
-* Catatan penyesuaian stok
-* Histori pergerakan stok
-* Warning stok minimum
-* Validasi stok tidak boleh minus
-
-#### Transaction
-
-* Cart transaksi
-* Penambahan produk ke cart
-* Pengurangan qty item
-* Perhitungan total otomatis
-* Dialog pembayaran
-* Perhitungan kembalian otomatis
-* Simpan transaksi ke database
-
-#### Receipt
-
-* Receipt preview
-* Informasi toko
-* Detail item transaksi
-* Ringkasan pembayaran
-* Export PDF receipt
-
-#### Settings
-
-* Nama toko
-* Alamat toko
-* Telepon toko
-* Footer nota
-
----
-
-### Improved
-
-#### Architecture
-
-* Refactor TransactionPage menjadi widget modular
-* CartSection dipisahkan
-* ProductListSection dipisahkan
-* CheckoutBar dipisahkan
-* PaymentDialog dipisahkan
-* QuickAddProductDialog dipisahkan
-
-#### Formatting
-
-* CurrencyFormatter dibuat reusable
-* DateFormatter dibuat reusable
-
-#### UX
-
-* Produk dapat ditambah langsung dari halaman transaksi
-* Inventory adjustment memiliki alasan dan catatan
-* Warning stok minimum lebih jelas
-* Histori stok lebih mudah dibaca
-
----
-
-### Fixed
-
-* Bug qty transaksi melebihi stok
-* Bug refresh data inventory setelah adjustment
-* Bug penggunaan BuildContext setelah async operation
-* Bug formatting currency pada beberapa halaman
-* Bug duplicate logic pada beberapa widget
-
----
-
-### Internal
-
-* Persiapan modular architecture
-* Persiapan flavor BASIC / ADVANCED / PRO
-* Persiapan inventory scaling
-* Persiapan custom unit conversion
-
-## [0.1.0-alpha] - 2026-05-31
-
-### Added
-- Customer model
-- Customer repository
-- Customer database table
-- Tempo payment workflow
-- Piutang page
-- Debt payment dialog
-- Receipt payment status
-
-### Fixed
-- QRIS and Transfer now require full payment
-- Prevent overpayment on debt settlement
-- Currency formatting for debt payments
-- Receipt header alignment
+# CHANGELOG
 
 ## v0.4.0-alpha
 
@@ -300,30 +6,260 @@
 
 #### Supplier Debt
 
-* Supplier debt management
-* Add supplier debt manually
-* Partial supplier debt payment
-* Full supplier debt settlement
-* Supplier debt detail page
-* Supplier payment history
-* Active / Paid supplier filter
+- Supplier debt management
+- Add supplier debt manually
+- Partial supplier debt payment
+- Full supplier debt settlement
+- Supplier debt detail page
+- Supplier payment history
+- Active / Paid supplier filter
 
 #### Activity
 
-* Supplier debt payments now appear in activity timeline
+- Supplier debt payments appear in activity timeline
 
 #### Cash Flow
 
-* Supplier debt payments now reduce cash balance
-* Supplier debt payments included in cash summary
+- Supplier debt payments reduce cash balance
+- Supplier debt payments included in cash summary
 
 ### Improved
 
-* Automatic refresh after supplier debt settlement
-* Better supplier debt workflow
-* Payment validation for overpayment prevention
+- Improved supplier debt workflow
+- Automatic refresh after supplier debt settlement
+- Better validation for supplier debt payment
 
 ### Fixed
 
-* Supplier list not refreshing after debt payment
-* Dialog controller lifecycle issues
+- Fixed supplier list not refreshing after debt payment
+- Fixed dialog controller lifecycle issues
+
+---
+
+## v0.3.1-alpha
+
+### Internal
+
+- Ignored build artifacts
+- Cleaned unused generated files
+- Removed unnecessary Kotlin compiler files
+
+---
+
+## v0.3.0-alpha
+
+### Added
+
+#### Activity
+
+- Activity timeline
+- Activity filter: Semua, Penjualan, Pengeluaran, Stok, Piutang
+- Activity period filter: Hari Ini, 7 Hari, 30 Hari
+- Activity cash summary
+- Pull-to-refresh activity page
+- Navigation from activity items to related detail pages
+
+#### Piutang
+
+- Customer debt management
+- Customer detail page
+- Customer debt summary
+- Debt payment history
+- Customer-based debt settlement workflow
+- Tempo payment workflow
+- Autocomplete customer name for tempo transaction
+
+#### Expenses
+
+- Expense management
+- Expense detail page
+- Activity integration for expenses
+
+#### Inventory
+
+- Stock log detail page
+- Activity integration for stock movement
+- Minimum stock management
+
+#### Transactions
+
+- Transaction detail page improvements
+- Payment method validation
+- Tempo payment scenario
+- Transaction navigation from Activity page
+
+#### Data Safety
+
+- Backup database
+- Restore database foundation
+
+#### App Branding
+
+- Application icon
+
+### Improved
+
+#### UX
+
+- Replaced most SnackBar notifications with AppDialog
+- Better navigation flow between modules
+- Cleaner activity timeline layout
+- Better readability for transaction and debt workflow
+- Improved payment input visibility based on payment method
+- Improved piutang page readability
+
+#### Architecture
+
+- ActivityPage refactored into modular widgets
+- ActivitySummaryCard extracted
+- ActivityItemCard extracted
+- ActivityFilterBar extracted
+- ActivityRangeBar extracted
+- Shared InfoRow widget
+- Currency formatting moved to global formatter
+
+#### Database
+
+- Reset development database to version 1
+- Improved piutang database structure
+- Added piutang payment table
+
+### Fixed
+
+- Fixed debt summary loading issue
+- Fixed null customer references in debt records
+- Fixed customer debt detail crash
+- Fixed payment validation issues
+- Fixed activity sorting consistency
+- Fixed stock refresh after transaction
+- Fixed stock returning to zero after insert
+- Fixed filtered activity index issue
+
+---
+
+## v0.2.0-alpha
+
+### Added
+
+#### Inventory
+
+- Stock history
+- Minimum stock warning
+- Inventory adjustment notes
+
+#### Transaction
+
+- Improved payment flow
+- Optimized transaction cart
+- Product search
+- Transaction detail page
+- Transaction history detail
+
+#### Receipt
+
+- Store settings for receipt printing
+- Receipt preview improvements
+- Basic printing functionality
+
+#### Navigation
+
+- Sidebar drawer menu
+- Dashboard/menu restructuring
+
+### Improved
+
+#### Documentation
+
+- Restructured README
+- Added documentation links
+- Added application state mapping documentation
+- Added stability level section
+
+#### Architecture
+
+- Refactored transaction page into smaller widgets
+- Split receipt preview page into widgets
+- Moved reusable currency text field to core
+- Added unit converter foundation
+
+#### UX
+
+- Improved inventory page readability
+- Improved product maintenance page readability
+- Changed labels and titles to Bahasa Indonesia
+
+### Fixed
+
+- Fixed database schema issues
+- Fixed minor transaction page issues
+- Fixed receipt preview issues
+- Cleaned unused files and testing folders
+
+---
+
+## v0.1.0-alpha
+
+### Added
+
+#### Project Foundation
+
+- Initial Flutter project setup
+- Local SQLite database
+- Basic cart system
+- Product page
+- Inventory page
+- Transaction page
+
+#### Product Management
+
+- Add product
+- Basic product edit
+- Selling price
+- Purchase price
+- Initial stock
+- Minimum stock
+- Basic product unit
+
+#### Inventory
+
+- Add stock manually
+- Reduce stock manually
+- Stock adjustment notes
+- Stock movement history
+- Stock validation to prevent negative stock
+
+#### Transaction
+
+- Transaction cart
+- Add product to cart
+- Reduce cart item quantity
+- Automatic total calculation
+- Payment dialog
+- Automatic change calculation
+- Save transaction to database
+
+#### Receipt
+
+- Receipt preview
+- Store information
+- Transaction item details
+- Payment summary
+
+#### Settings
+
+- Store name
+- Store address
+- Store phone number
+- Receipt footer
+
+### Improved
+
+- Reusable currency formatter
+- Reusable date formatter
+
+### Fixed
+
+- Fixed transaction quantity exceeding available stock
+- Fixed inventory refresh after stock adjustment
+- Fixed BuildContext usage after async operation
+- Fixed currency formatting issues

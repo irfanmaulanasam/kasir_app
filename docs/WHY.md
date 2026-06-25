@@ -1,205 +1,262 @@
-# Why This Project Exists
+# WHY
 
-Kasir App was not created because the world lacks POS applications.
+## Mengapa Proyek Ini Dibuat
 
-In fact, there are already many POS systems that are:
+Kasir App tidak dibuat karena dunia kekurangan aplikasi kasir.
 
-- feature-rich
-- visually modern
-- packed with advanced dashboards
-- designed for expensive hardware
-- integrated with countless services
+Saat ini sudah banyak aplikasi POS yang menawarkan:
 
-Yet many small businesses still return to:
+- tampilan modern
+- sinkronisasi cloud
+- laporan yang kompleks
+- dashboard yang menarik
+- integrasi dengan berbagai layanan
 
-- calculators
-- handwritten notes
-- personal memory
-- simple manual bookkeeping
+Sebagian bahkan memiliki fitur yang sangat lengkap.
 
-Not because they reject technology.
+Namun di sisi lain, masih banyak usaha kecil yang tetap mengandalkan:
 
-But because many POS systems feel:
+- kalkulator
+- catatan tulis tangan
+- buku kas
+- spreadsheet sederhana
+- ingatan pemilik usaha
 
-- too complicated
-- too corporate-oriented
-- too rigid
-- too sensitive to small mistakes
-- too focused on features instead of workflow
+Bukan karena mereka menolak teknologi.
 
-In some situations, a simple mistake such as entering the wrong date, pressing the wrong button, or misunderstanding a menu can lead to:
+Tetapi karena teknologi sering kali terasa lebih rumit daripada masalah yang ingin diselesaikan.
 
-- broken reports
-- inconsistent inventory
-- failed transactions
-- user frustration
-- abandoned software
+Banyak pemilik usaha sebenarnya hanya ingin mengetahui:
 
-Eventually the software becomes nothing more than an expensive decoration.
+- uang masuk berapa
+- uang keluar berapa
+- siapa yang masih berhutang
+- hutang ke supplier berapa
+- stok barang tersisa berapa
 
-That led to a simple question:
+Sayangnya, tidak sedikit software yang menambahkan kompleksitas sebelum berhasil menjawab pertanyaan-pertanyaan tersebut.
 
-> Is the software truly helping the business,
-> or is it making daily work even harder?
+Kesalahan kecil seperti:
 
----
+- salah memasukkan data
+- salah memilih menu
+- salah memahami alur kerja
 
-# Project Philosophy
+dapat menyebabkan:
 
-Kasir App is built with a different philosophy.
+- laporan membingungkan
+- stok tidak sesuai
+- transaksi gagal
+- data sulit dipahami
+- pengguna kehilangan kepercayaan terhadap sistem
 
-The goal of this project is not to create the most advanced POS system.
+Pada akhirnya software hanya menjadi pajangan yang jarang digunakan.
 
-The goal is to create software that is actually used.
+Hal tersebut memunculkan sebuah pertanyaan sederhana:
 
-This project prioritizes:
+> Apakah software benar-benar membantu menjalankan usaha,
+> atau justru membuat pemilik usaha harus belajar cara menggunakan software?
 
-- transaction stability
-- operational simplicity
-- practical inventory management
-- low learning curve
-- resilience against user mistakes
-- fast daily workflows
-
-instead of focusing too early on:
-
-- enterprise complexity
-- excessive dashboards
-- unnecessary automation
-- complicated setup processes
-- features that look impressive but are rarely used
+Kasir App dibuat untuk menjawab pertanyaan tersebut.
 
 ---
 
-# Design Principles
+# Filosofi Produk
+
+Kasir App dibangun berdasarkan keyakinan sederhana:
+
+> Software harus membantu orang menjalankan usaha,
+> bukan memaksa usaha mengikuti cara kerja software.
+
+Tujuan proyek ini bukan membuat aplikasi kasir paling canggih.
+
+Tujuan proyek ini adalah membuat aplikasi yang benar-benar digunakan setiap hari.
+
+Karena aplikasi yang digunakan setiap hari jauh lebih berharga daripada aplikasi dengan ratusan fitur yang tidak pernah dipakai.
+
+Fokus utama Kasir App adalah:
+
+- transaksi yang stabil
+- pengelolaan stok yang mudah dipahami
+- pencatatan uang masuk dan keluar
+- pengelolaan piutang
+- pengelolaan hutang sederhana
+- alur kerja yang cepat
+- proses belajar yang minim
+
+Sebelum memikirkan fitur-fitur yang lebih kompleks.
+
+---
+
+# Prinsip Desain
 
 ## Workflow First
 
-Features should follow how people actually work.
+Fitur harus mengikuti cara orang bekerja.
 
-Not how software vendors think they should work.
+Bukan memaksa orang bekerja mengikuti software.
 
-The workflow should feel natural for:
+Kasir App dirancang agar terasa natural digunakan oleh:
 
-- grocery stores
-- traditional retailers
-- small wholesalers
-- family-owned businesses
-- neighborhood shops
+- warung
+- toko sembako
+- toko bangunan
+- toko kelontong
+- usaha keluarga
+- grosir kecil
+
+Software harus beradaptasi dengan pengguna.
+
+Bukan sebaliknya.
+
+---
 
 ## Offline First
 
-A cashier should still be able to sell products even when:
+Usaha harus tetap berjalan meskipun internet tidak tersedia.
 
-- internet is unavailable
-- WiFi is disconnected
-- mobile data is unstable
+Kasir tetap harus bisa melakukan transaksi ketika:
 
-Business should not stop because a server cannot be reached.
+- WiFi mati
+- jaringan tidak stabil
+- paket data habis
+- server tidak dapat diakses
 
-## Low-End Device Friendly
-
-Many small businesses still use:
-
-- older Android phones
-- entry-level devices
-- low-memory hardware
-
-Kasir App aims to remain usable on devices that are often ignored by modern software.
-
-The software should adapt to the user's device.
-
-Not force the user to buy a new one.
-
-## Mistake-Tolerant
-
-People make mistakes.
-
-Software should help recover from mistakes instead of punishing them.
-
-The system should:
-
-- prevent common errors
-- reduce accidental actions
-- provide clear feedback
-- keep inventory consistent
-- avoid data corruption
-
-## Simplicity Before Features
-
-Adding features is easy.
-
-Keeping software simple is difficult.
-
-Every feature should answer one question:
-
-> Does this make daily operations easier?
-
-If the answer is no, the feature probably does not belong in the BASIC version.
+Usaha tidak boleh berhenti hanya karena koneksi internet bermasalah.
 
 ---
 
-# Who This Project Is For
+## Ramah Perangkat Sederhana
 
-Kasir App is designed for:
+Tidak semua usaha menggunakan perangkat terbaru.
 
-- small shops
-- grocery stores
-- traditional retailers
-- family-owned businesses
-- small wholesalers
-- businesses that prioritize simplicity
+Banyak usaha kecil masih menggunakan:
 
-The project assumes:
+- Android lama
+- perangkat entry level
+- perangkat dengan memori terbatas
 
-- internet may be unavailable
-- operators are not always technology experts
-- transaction speed matters
-- inventory management should remain understandable
+Kasir App dirancang agar tetap dapat digunakan secara nyaman pada perangkat tersebut.
+
+Software harus menyesuaikan diri dengan kondisi pengguna.
+
+Bukan memaksa pengguna membeli perangkat baru.
 
 ---
 
-# Who This Project Is NOT For
+## Toleran Terhadap Kesalahan
 
-Kasir App is not intended to replace full ERP systems.
+Manusia pasti melakukan kesalahan.
 
-It is not designed for:
+Software yang baik membantu memperbaiki kesalahan.
 
-- large enterprises
-- manufacturing systems
-- complex accounting workflows
-- advanced warehouse management
-- highly customized corporate processes
+Bukan menghukum pengguna karena melakukan kesalahan.
 
-Businesses with those requirements are often better served by dedicated ERP solutions.
+Sistem harus:
 
----
+- mengurangi kesalahan umum
+- memberikan informasi yang jelas
+- menjaga konsistensi stok
+- menjaga kestabilan transaksi
+- meminimalkan risiko kehilangan data
 
-# Current Development Focus
-
-The current focus is not feature expansion.
-
-The current focus is:
-
-- transaction stability
-- inventory reliability
-- workflow simplification
-- codebase maintainability
-- low-end device performance
-- UX refinement
-
-Before adding advanced features, the BASIC experience must be reliable.
+Keandalan lebih penting daripada banyaknya fitur.
 
 ---
 
-# Long-Term Vision
+## Kesederhanaan Di Atas Segalanya
 
-Kasir App is built around a simple belief:
+Menambah fitur itu mudah.
 
-> Good software is not software that looks modern.
+Menjaga software tetap sederhana jauh lebih sulit.
 
-> Good software is software that people willingly use every day.
+Karena itu setiap fitur harus menjawab satu pertanyaan:
 
-The objective is not to build the biggest POS system.
+> Apakah fitur ini benar-benar mempermudah pekerjaan sehari-hari?
 
-The objective is to build a POS system that helps business owners spend less time fighting software and more time running their business.
+Jika jawabannya tidak jelas, maka fitur tersebut kemungkinan belum perlu masuk ke produk inti.
+
+---
+
+# Untuk Siapa Kasir App Dibuat
+
+Kasir App dirancang untuk:
+
+- warung
+- toko sembako
+- toko bangunan
+- toko kelontong
+- usaha keluarga
+- grosir kecil
+- usaha yang mengutamakan kesederhanaan
+
+Kasir App mengasumsikan bahwa:
+
+- internet tidak selalu tersedia
+- pengguna tidak selalu memahami teknologi
+- kecepatan transaksi penting
+- stok harus mudah dipahami
+- pemilik usaha membutuhkan gambaran kondisi usahanya dengan cepat
+
+---
+
+# Untuk Siapa Kasir App Tidak Dibuat
+
+Kasir App bukan pengganti ERP.
+
+Kasir App tidak dirancang untuk:
+
+- perusahaan besar
+- sistem manufaktur
+- akuntansi kompleks
+- warehouse management tingkat lanjut
+- proses bisnis perusahaan yang sangat khusus
+
+Kebutuhan tersebut lebih cocok menggunakan sistem ERP yang memang dibuat untuk tujuan tersebut.
+
+Kasir App sengaja menjaga ruang lingkupnya tetap sederhana.
+
+---
+
+# Fokus Pengembangan Saat Ini
+
+Saat ini fokus utama pengembangan adalah memperkuat fondasi aplikasi.
+
+Meliputi:
+
+- stabilitas transaksi
+- keakuratan stok
+- piutang pelanggan
+- hutang supplier sederhana
+- pencatatan pengeluaran
+- penyederhanaan alur kerja
+- performa perangkat rendah
+- peningkatan pengalaman pengguna
+
+Sebelum menambahkan fitur yang lebih kompleks, pengalaman dasar harus benar-benar stabil dan dapat dipercaya.
+
+---
+
+# Visi Jangka Panjang
+
+Kasir App dibangun berdasarkan keyakinan sederhana:
+
+> Software yang baik bukan software yang memiliki fitur paling banyak.
+
+> Software yang baik adalah software yang terus digunakan bertahun-tahun setelah dipasang.
+
+Tujuan jangka panjang proyek ini bukan menjadi aplikasi kasir terbesar.
+
+Tujuan jangka panjang proyek ini adalah membantu pemilik usaha memahami kondisi usahanya dengan lebih mudah.
+
+Jika pemilik usaha dapat memahami:
+
+- uang masuk
+- uang keluar
+- piutang
+- hutang
+- pergerakan stok
+
+tanpa harus mempelajari sistem yang rumit,
+
+maka Kasir App telah berhasil mencapai tujuannya.

@@ -1,132 +1,171 @@
 # ROADMAP
 
-## BASIC (Wajib Bisa Dipakai Harian)
+## BASIC — Operasional Harian
 
 Target:
 
-Pemilik usaha kecil dapat mencatat transaksi, stok, dan kondisi kas tanpa perlu belajar akuntansi.
+Pemilik usaha dapat menjalankan kegiatan harian dan memahami kondisi usaha tanpa perlu belajar sistem yang rumit.
 
-### Store Setup
+### Produk
 
-- [x] Setup toko
-- [x] Pengaturan toko
+* Manajemen produk
+* Harga jual
+* Harga beli
+* Minimum stok
 
-### Product & Inventory
+### Stok
 
-- [x] Manajemen produk
-- [x] Tambah stok
-- [x] Kurangi stok
-- [x] Riwayat stok
-- [x] Minimum stok
+* Tambah stok
+* Kurangi stok
+* Riwayat stok
+* Warning minimum stok
 
-### Sales
+### Penjualan
 
-- [x] Transaksi penjualan
-- [x] Pembayaran cash
-- [x] Pembayaran transfer
-- [x] Pembayaran QRIS
-- [x] Pembayaran tempo
+* Transaksi penjualan
+* Pembayaran tunai
+* Pembayaran transfer
+* Pembayaran QRIS
+* Nota transaksi
+* Riwayat transaksi
 
-### Receivable (Piutang)
+### Piutang
 
-- [x] Piutang pelanggan
-- [x] Pembayaran piutang
-- [x] Riwayat pembayaran piutang
+* Penjualan tempo
+* Daftar piutang
+* Pembayaran piutang
+* Riwayat pembayaran piutang
 
-### Expense
+### Pengeluaran
 
-- [x] Pengeluaran kas
+* Catat pengeluaran
+* Riwayat pengeluaran
 
-### Cash Flow
+### Arus Kas
 
-- [x] Kas awal
-- [x] Ringkasan kas
-- [x] Activity timeline
+* Kas awal
+* Ringkasan kas
+* Aktivitas keuangan
 
-### Data Safety
+### Keamanan Data
 
-- [x] Backup database
-- [x] Restore database
+* Backup database
+* Restore database
+
+### Pengaturan Toko
+
+* Nama toko
+* Alamat
+* Nomor telepon
+* Footer nota
 
 ---
 
-## ADVANCED (Pengelolaan Usaha)
+## ADVANCED — Pengelolaan Usaha
 
 Target:
 
-Pemilik usaha mulai memahami arus barang, hutang, dan keuntungan usaha.
+Pemilik usaha mulai memahami hubungan antara penjualan, pembelian, hutang, dan keuntungan usaha.
 
 ### Supplier
 
-- [x] Hutang supplier
-- [x] Pembayaran hutang supplier
-- [x] Riwayat pembayaran supplier
+* Data supplier
+* Hutang supplier
+* Pembayaran hutang supplier
+* Riwayat pembayaran hutang
 
-### Customer
+### Pembelian
 
-- [ ] Customer management
+* Pembelian stok
+* Supplier pada pembelian
+* Pembelian tempo
+* Riwayat pembelian
 
-### Purchase
+### Pelanggan
 
-- [ ] Pembelian stok
-- [ ] Supplier saat pembelian
-- [ ] Pembelian tempo
-- [ ] Riwayat pembelian
+* Data pelanggan
+* Histori transaksi pelanggan
 
-### Reporting
+### Konsinyasi
 
-- [ ] Laporan kas
-- [ ] Laporan laba rugi sederhana
-- [ ] Ringkasan piutang
-- [ ] Ringkasan hutang supplier
+* Barang titipan
+* Supplier konsinyasi
+* Perhitungan bagi hasil
 
-### Operational Tools
+### Laporan
 
-- [ ] Barcode scanner
-- [ ] QR scanner
-- [ ] Pencarian produk cepat
+* Ringkasan penjualan
+* Ringkasan pengeluaran
+* Ringkasan piutang
+* Ringkasan hutang
+* Laporan laba rugi sederhana
 
 ---
 
-## PRO (Scale Up)
+## PRO — Scale Up
 
 Target:
 
-Usaha memiliki lebih dari satu perangkat, kasir, atau cabang.
+Usaha memiliki lebih dari satu pengguna, perangkat, atau lokasi usaha.
 
-### Synchronization
+### Multi User
 
-- [ ] Cloud sync
-- [ ] Backup cloud
+* Banyak pengguna
+* Hak akses
+* Aktivitas pengguna
 
-### Team
+### Sinkronisasi
 
-- [ ] Multi user
-- [ ] Multi cashier
-- [ ] Hak akses pengguna
+* Cloud sync
+* Backup cloud
+* Restore cloud
 
-### Business Intelligence
+### Multi Cabang
 
-- [ ] Dashboard owner
-- [ ] Analitik penjualan
-- [ ] Analitik produk
-- [ ] Analitik pelanggan
+* Banyak toko
+* Sinkronisasi data
+* Monitoring cabang
 
-### Multi Branch
+### Dashboard Owner
 
-- [ ] Multi device
-- [ ] Multi cabang
-- [ ] Sinkronisasi stok antar cabang
+* Ringkasan bisnis
+* Performa toko
+* Monitoring operasional
+
+### Analitik
+
+* Produk terlaris
+* Tren penjualan
+* Tren pelanggan
 
 ---
 
-## Future Ideas
+## WORKFLOW TOOLS
 
-- [ ] Thermal printer
-- [ ] Bluetooth printer
-- [ ] Export Excel
-- [ ] Export CSV
-- [ ] WhatsApp invoice
-- [ ] WhatsApp tagihan piutang
-- [ ] Dark mode
-- [ ] Multi currency
+Fitur pendukung yang dapat diterapkan pada berbagai level produk.
+
+* Barcode scanner
+* QR scanner
+* Thermal printer
+* Bluetooth printer
+* Export Excel
+* Export CSV
+* WhatsApp invoice
+* WhatsApp tagihan
+* Dark mode
+
+---
+
+## NOT IN SCOPE
+
+Fitur yang tidak menjadi fokus Kasir App.
+
+* ERP manufaktur
+* Produksi / BOM
+* HRD
+* Payroll
+* Akuntansi perusahaan lengkap
+* Warehouse management kompleks
+* Approval workflow berlapis
+* Fleet management
+* CRM enterprise

@@ -1,36 +1,19 @@
 # Kasir App
 
-Kasir sederhana dengan pencatatan usaha kecil.
-
-Fokus aplikasi:
-
-- Mencatat transaksi
-- Mengelola stok
-- Mengelola kas
-- Mengelola piutang
-- Mengelola hutang supplier
-- Membantu pemilik usaha memahami kondisi usahanya
-
-Bukan software akuntansi penuh, tetapi jembatan antara kasir dan pencatatan usaha.
-
-## Focus
-- fast transaction flow
-- lightweight inventory
-- low resource usage
-- offline-first architecture
-- simple cashier experience
+Simple Offline-First POS for Small Businesses.
 
 ## Documentation
-
-- [Project Documentation](docs/README.md)
-- [Roadmap](docs/ROADMAP.md)
-- [Features](docs/FEATURES.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Changelog](docs/CHANGELOG.md)
-- [Why](docs/WHY.md)
-
-## Run App
-
-```bash
-flutter run -t lib/main_basic.dart
-```
+- [WHY] (docs/WHY.md)
+    isinya tentang kenapa aplikasi ini dibuat.
+- [FEATURES] (docs/FEATURES.md)
+    isinya mengenai fitur-fitur yang ada dalam aplikasi ini.
+- [ROADMAP] (docs/ROADMAP.md)
+    isinya mengenai mapping aplikasi ini untuk memberikan batasan sampai mana aplikasi dibuat dan bagian-bagian mana saja yang menjadi perhatian.
+- [ARCHITECTURE] (docs/ARCHITECTURE.md)
+    isinya adalah hal apa saja yang menjadi pertimbangan dalam pembuatan aplikasi ini.
+- [DATABASE] (docs/DATABASE.md)
+    isinya adalah struktur tabel database yang dibuat dalam aplikasi ini.
+- [BACKLOG] (docs/BACKLOG.md)
+    isinya merupakan ide baik berupa fitur maupun bagian-bagian yang ingin diperbaharui dalam aplikasi.
+- [CHANGELOG] (docs/CHANGELOG.md)
+    isinya berupa hal-hal yang telah diselesaikan dalam aplikasi ini baik fitur, perubahan, perbaikan, bug dan lain sebagainya.
